@@ -10,6 +10,12 @@ During this course you will learn how to build a **meaningful** real-time applic
 
 [Rubric][rubric]
 
+
+## Concept
+Online rubber ducky?
+
+
+
 ## Curriculum
 
 ### Week 1 - Hello Server
