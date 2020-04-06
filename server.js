@@ -4,12 +4,12 @@ require ( 'express-ws' ) ( app );
 const bodyParser = require ( 'body-parser' );
 require ( 'dotenv' ).config ();
 const port = process.env.PORT || 3000;
-const MongoClient = require ( 'mongodb' ).MongoClient;
-const uri = `mongodb+srv://${ process.env.MONGODB_USER }:${ process.env.MONGODB_PASSWORD }@${ process.env.MONGODB_SERVER }/rtw1920?retryWrites=true&w=majority`;
-const client = new MongoClient ( uri, { useNewUrlParser: true, useUnifiedTopology: true } );
-
-client.connect ( err => {
-    const collection = client.db ( "rtw1920" ).collection ( "users" );
+// const MongoClient = require ( 'mongodb' ).MongoClient;
+// const uri = `mongodb+srv://${ process.env.MONGODB_USER }:${ process.env.MONGODB_PASSWORD }@${ process.env.MONGODB_SERVER }/rtw1920?retryWrites=true&w=majority`;
+// const client = new MongoClient ( uri, { useNewUrlParser: true, useUnifiedTopology: true } );
+//
+// client.connect ( err => {
+//     const collection = client.db ( "rtw1920" ).collection ( "users" );
     let wsClients = [];
     app.set ( 'view engine', 'pug' );
     app.use ( bodyParser.urlencoded ( { extended: true } ) );
@@ -78,4 +78,4 @@ client.connect ( err => {
 
     app.listen ( port, () => console.log (
         `Example app listening on port ${ port }!` ) );
-} );
+// } );
