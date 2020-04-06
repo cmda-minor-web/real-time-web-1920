@@ -13,6 +13,7 @@
 
 - [✅ To-do](#--to-do)
 - [📋 Concept](#---concept)
+- [👯🏿‍ Features (+ wishlist)](#------features----wishlist-)
 - [⚙️ Installation](#---installation)
 - [🧑🏼‍ Actor Diagram](#------actor-diagram)
 - [↔️ Interaction diagram](#---interaction-diagram)
@@ -23,7 +24,6 @@
     + [Endpoint(s)](#endpoint-s-)
     + [Rate limiting](#rate-limiting)
   * [💽 Data cleaning](#---data-cleaning)
-- [👯🏿‍ Features (+ wishlist)](#------features----wishlist-)
 - [🏫 Assignment](#---assignment)
   * [Learning goals](#learning-goals)
   * [Week 1 - Hello Server 🐒](#week-1---hello-api---)
@@ -40,12 +40,31 @@
 </details>
 
 ## ✅ To-do
-- [x] First item
-- [ ] Second item
+- [x] Init readme
+- [x] Init wiki
+- [ ] Tutorial socket.io 
+
+
 
 ## 📋 Concept
 _What does your app do, what is the goal? (passing butter)_ 
+**Chatbot**
+- Users can add quotes to a quotelist, then request a random one via the `quote`-command. 
+- Chatbot responds with quotes when specific words are used (kinda like _Slackbot_-responses)
 
+**Multiple contributors**
+- Users can add things to household shopping list
+
+
+**Effects**
+- Trigger on-screen effects when a specific word is used (for example: `fireworks`)
+
+## 👯🏿‍ Features (+ wishlist)
+_What would you like to add (feature wishlist / backlog)?_ 
+
+- [x] one thing
+- [ ] second something
+- [ ] third thing
 
 ## ⚙️ Installation
 Clone this repository to your own device:
@@ -55,7 +74,7 @@ $ git clone https://github.com/deannabosschert/real-time-web-1920.git
 Then, navigate to this folder and run:
 
 ```bash
-npm run dev`
+npm run dev
 ```
 , or: 
 
@@ -133,37 +152,31 @@ outcome:
 ```json
 ```
 
-## 👯🏿‍ Features (+ wishlist)
-_What would you like to add (feature wishlist / backlog)?_ 
-
-- [x] one thing
-- [ ] second something
-- [ ] third thing
-
-
 ## 🏫 Assignment
 <details>
   <summary></strong> (click to expand)</summary>
-In this course..
+> During this course you will learn how to build a meaningful real-time application. You will learn techniques to setup an open connection between the client and the server. This will enable you to send data in real-time both ways, at the same time.
+
 
 ### Learning goals
 
-- _You can ..._
-- _You can ..._
-- _You can ..._
+- _You can deal with real-time complexity_
+- _You can handle real-time client-server interaction
+- _You can handle real-time data management_
+- _You can handle multi-user support_
 
-### Week 1 - title 🐒
 
-Goal: xxx
---> hoe heb ik dit gedaan? --> verwijzing naar wiki, of inklappen?
+### Week 1 - Hello Server 📤
 
-### Week 2 - title 🛠
+Goal: Build and deploy a unique barebone real-time app
 
-Goal: xxx
+### Week 2 - Sharing is caring 👯
 
-### Week 3 - title 🎁
+Goal: Store, manipulate and share data between server-client
 
-Goal: xxx
+### Week 3 - Let’s take this show on the road 🛣️
+
+Goal: Handle data sharing and multi-user support
 
 </details>
 
@@ -186,5 +199,5 @@ Goal: xxx
 ## 🗺️ License
 
 Author: [Deanna Bosschert](https://github.com/deannabosschert) , license by
-[MIT](https://github.com/deannabosschert/web-app-from-scratch-1920/blob/master/LICENSE)
+[MIT](https://github.com/deannabosschert/real-time-web-1920/blob/master/LICENSE)
 
