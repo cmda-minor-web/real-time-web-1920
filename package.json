@@ -1,0 +1,22 @@
+{
+  "name": "real-time-web-1920",
+  "version": "1.0.0",
+  "description": "Real time web application with sockets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CountNick/real-time-web-1920.git"
+  },
+  "author": "Nick Meijer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CountNick/real-time-web-1920/issues"
+  },
+  "homepage": "https://github.com/CountNick/real-time-web-1920#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
