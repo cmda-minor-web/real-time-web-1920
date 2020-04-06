@@ -1,0 +1,52 @@
+{
+  "name": "rtw",
+  "version": "1.0.0",
+  "private": true,
+  "description": "during this project im gonna learn something about real time web, very fun",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.1",
+    "express-handlebars": "^3.1.0",
+    "hbs": "^4.1.0",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ramon96/real-time-web-1920.git"
+  },
+  "keywords": [
+    "real",
+    "time",
+    "web",
+    "rule",
+    "te",
+    "world",
+    "web",
+    "sockets",
+    "internet",
+    "browser",
+    "progresive",
+    "app",
+    "from",
+    "scratch"
+  ],
+  "author": "Ramon Meijers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ramon96/real-time-web-1920/issues"
+  },
+  "homepage": "https://github.com/Ramon96/real-time-web-1920#readme"
+}
