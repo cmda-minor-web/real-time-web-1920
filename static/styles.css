@@ -1,0 +1,169 @@
+:root {
+    --dark: #000;
+    --primary: #2274A5;
+    --secondary: #F75C03;
+    --ternary: #F1C40F;
+    --error: #D90368;
+    --succes: #00CC66;
+    --light: #fff;
+}
+
+body, .app {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    background-color: var(--primary);
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    height: 3em;
+    width: 100%;
+    flex-shrink: 0;
+    padding: 20px;
+    background-color: var(--primary);
+    color: var(--secondary);
+}
+
+body {
+    font: 13px Helvetica, Arial;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    text-align: center;
+    height: 5em;
+    background-color: var(--primary);
+    color: var(--secondary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    width: 100%;
+    flex: 1 0 auto;
+    padding: 6em 1em 5em;
+    background-color: var(--ternary);
+    display: flex;
+    flex-direction: column;
+}
+
+main::-webkit-scrollbar {
+    display: none;
+}
+
+form {
+    padding: 15px 10px;
+    background-color: var(--primary);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5em;
+}
+form#signin {
+    height: initial;
+    padding: 10px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    color: var(--light);
+    width: 50%;
+    position: relative;
+    margin: 5em auto;
+}
+
+form input {
+    border: 0;
+    padding: 10px;
+    width: 90%;
+    margin-right: .5%;
+    border-radius: 5px;
+}
+
+form button {
+    width: 9%;
+    background-color: var(--succes);
+    color: var(--error);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+form#signin input {
+    width: 83%;
+    margin-right: 0;
+}
+
+form#signin label {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+form#signin button {
+    width: 100%;
+    margin-top: 1em;
+    border: none;
+    padding: 10px;
+}
+#messages li{
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+}
+
+#messages li em{
+    font-style: normal;
+}
+
+#messages li p{
+    min-width: 40%;
+    max-width: 80%;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-bottom: 0.2em;
+}
+
+#messages li.own {
+    align-items: baseline;
+    justify-content: flex-end;
+}
+
+#messages li.own p {
+    margin-left: 0.5em;
+    background: var(--succes);
+    color: var(--error);
+}
+
+#messages li.other p {
+    margin-left: 0.5em;
+    background: var(--primary);
+    color: var(--secondary);
+}
+
+#messages li.welcome {
+    background: none;
+    color: var(--primary);
+}

@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-ws": "^4.0.0",
+    "mongodb": "^3.5.5",
+    "pug": "^2.0.4",
+    "rollup": "^2.3.3",
+    "rollup-plugin-pug": "^1.1.1",
+    "ws": "^7.2.3"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "start": "node index.js",
+    "watch": "rollup -cw",
+    "dev": "nodemon index.js --ignore main.js --ignore 'static/*' --ignore static/sw.js"
+  },
+  "name": "real-time-web-1920",
+  "version": "1.0.0",
+  "description": "Bas de Greeuw assignment",
+  "main": "server.js",
+  "repository": "git@github.com:aaraar/real-time-web-1920.git",
+  "author": "Bas de Greeuw <bdegreeuw@ziggo.nl>",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}

@@ -1,0 +1,9 @@
+extends layouts/main-layout.pug
+block content
+    article
+        header
+            h2 WebDev Minor Enquete
+            if !content
+                h3 404 | pagina niet gevonden
+            else
+                h3= content
