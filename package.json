@@ -14,9 +14,9 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "start": "node index.js",
+    "start": "node server.js",
     "watch": "rollup -cw",
-    "dev": "nodemon index.js --ignore main.js --ignore 'static/*' --ignore static/sw.js"
+    "dev": "nodemon server.js --ignore main.js --ignore 'static/*' --ignore static/sw.js"
   },
   "name": "real-time-web-1920",
   "version": "1.0.0",
