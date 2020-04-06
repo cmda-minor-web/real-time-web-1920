@@ -4,4 +4,8 @@ function homeRoute(req, res){
     })
 }
 
-module.exports = { homeRoute }
+function chatRoute(req, res){
+    res.render('chat.html')
+}
+
+module.exports = { homeRoute, chatRoute }
