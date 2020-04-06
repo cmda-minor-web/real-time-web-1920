@@ -170,7 +170,7 @@ Goal: xxx
 ### Rubric
 
 [Rubric- detailed rating of my project](https://github.com/deannabosschert/real-time-web-1920/wiki/Rubric)
-![rubric](https://github.com/deannabosschert/real-time-web-1920/blob/master/src/img/rubric.png)
+![screenshot of rubric](https://github.com/deannabosschert/real-time-web-1920/blob/master/docs/img/rubric.png)
 
 ## ℹ️ Resources
 
