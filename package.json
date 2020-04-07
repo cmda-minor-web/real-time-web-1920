@@ -4,15 +4,20 @@
   "description": "Chatroom with chatbot that collects quotes added by users",
   "dependencies": {
     "express": "^4.17.1",
-    "nodemon": "^2.0.2",
     "socket.io": "^2.3.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js"
   },
-  "author": "",
+  "bugs": {
+    "url": "https://github.com/deannabosschert/real-time-web-1920/issues"
+  },
+  "homepage": "https://github.com/deannabosschert/real-time-web-1920#readme",
+  "author": "Deanna Bosschert",
   "license": "ISC"
 }
