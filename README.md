@@ -42,14 +42,14 @@
 ## ✅ To-do
 - [x] Init readme
 - [x] Init wiki
-- [ ] Tutorial socket.io 
+- [ ] Tutorial socket.io
 
 
 
 ## 📋 Concept
-_What does your app do, what is the goal? (passing butter)_ 
+_What does your app do, what is the goal? (passing butter)_
 **Chatbot**
-- Users can add quotes to a quotelist, then request a random one via the `quote`-command. 
+- Users can add quotes to a quotelist, then request a random one via the `quote`-command.
 - Chatbot responds with quotes when specific words are used (kinda like _Slackbot_-responses)
 
 **Multiple contributors**
@@ -60,7 +60,7 @@ _What does your app do, what is the goal? (passing butter)_
 - Trigger on-screen effects when a specific word is used (for example: `fireworks`)
 
 ## 👯🏿‍ Features (+ wishlist)
-_What would you like to add (feature wishlist / backlog)?_ 
+_What would you like to add (feature wishlist / backlog)?_
 
 - [x] one thing
 - [ ] second something
@@ -76,7 +76,7 @@ Then, navigate to this folder and run:
 ```bash
 npm run dev
 ```
-, or: 
+, or:
 
 ```bash
 npm install
@@ -117,7 +117,7 @@ _How does flowed interaction through the application? (interaction diagram)_
 - ^ also helps with 'closing' a feature, so you are more likely to move on to the next. Too little time, too much ideas.
 - Commit early, commit often.
 - Make single-purpose commits.
-- Always fix your .gitignore-contents asap; node_modules or the like won't ever be pushed that way. 
+- Always fix your .gitignore-contents asap; node_modules or the like won't ever be pushed that way.
 - Styling comes last. It's gonna change anyways so most of the time, it's better to fix the technical stuff first.
 - Don't use declarations in the global scope.
 - Start your project with writing down the future function names (pre-actors, basically).
@@ -134,7 +134,7 @@ _How does flowed interaction through the application? (interaction diagram)_
 ## 🗃 Data
 
 ### 🐒 API
-_What external data source is featured in your project and what are its properties?_ 
+_What external data source is featured in your project and what are its properties?_
 
 Somethingsomething
 
@@ -183,7 +183,7 @@ Goal: Handle data sharing and multi-user support
 ### Rubric
 
 [Rubric- detailed rating of my project](https://github.com/deannabosschert/real-time-web-1920/wiki/Rubric)
-![screenshot of rubric](https://github.com/deannabosschert/real-time-web-1920/blob/master/docs/img/rubric.png)
+![screenshot of rubric](https://github.com/deannabosschert/real-time-web-1920/blob/master/src/img/documentation/rubric.png)
 
 ## ℹ️ Resources
 
@@ -200,4 +200,3 @@ Goal: Handle data sharing and multi-user support
 
 Author: [Deanna Bosschert](https://github.com/deannabosschert) , license by
 [MIT](https://github.com/deannabosschert/real-time-web-1920/blob/master/LICENSE)
-
