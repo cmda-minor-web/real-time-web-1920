@@ -127,6 +127,7 @@ form#signin button {
     padding: 10px;
 }
 #messages li{
+    word-break: break-word;
     max-width: 1400px;
     margin: 0 auto;
     display: flex;
@@ -151,6 +152,13 @@ form#signin button {
     justify-content: flex-end;
 }
 
+#messages li.other {
+    align-items: baseline;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+}
+
+
 #messages li.own p {
     margin-left: 0.5em;
     background: var(--succes);
@@ -158,7 +166,7 @@ form#signin button {
 }
 
 #messages li.other p {
-    margin-left: 0.5em;
+    margin-right: 0.5em;
     background: var(--primary);
     color: var(--succes);
 }
