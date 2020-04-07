@@ -25,8 +25,13 @@ nunjucks.configure(`${__dirname}/view/pages`, {
     express: app
 });
 
-const users = {}
-const answers = []
+const users = []
+let connectCounter = 0
+
+
+function countInArray(array, what) {
+    return array.filter(item => item == what).length;
+}
 
 app
     .use(express.static(path.join(__dirname, 'static')))
@@ -34,28 +39,50 @@ app
     .get('/chat', router.chatRoute)
 
 io.on('connection', (socket) => {
-    // console.log('a user connected')
+
+    const user = () => users.find(user => user.id == socket.id)
+
+    let randomWord = words[Math.floor(Math.random() * words.length)]
 
     socket.on('send-nickname', (nickname) => {
-        users[socket.id] = nickname
-        socket.broadcast.emit('user connected', nickname)
-        // socket.nickname = nickname
-        // if(nickname != null){
-        // users.push(socket.nickname)
-        // }
-        console.log(users)
+        // users[socket.id] = nickname
+        users.push({id: socket.id, name: nickname, answers: []})
+        
+        socket.broadcast.emit('user connected', `${user().name} entered the room`)
+        connectCounter++
+        
+
+        if(connectCounter === 2){
+            io.sockets.emit('challenge', `The word is: ${randomWord.word}`)
+        }
+
     })
 
+    socket.on('disconnect', () => {
+
+         if(user() !== undefined) {
+            socket.broadcast.emit('server message', `${user().name} has left the chat`)
+            connectCounter--
+        }
+                
+    })
 
     socket.on('chat message', (msg) => {
-        console.log('message: ', msg)
 
-        answers.push(msg)
+        // users.find(user => {
+            if(user().id == socket.id){
+                user().answers.push(msg)
+                let keepCount = countInArray(user().answers, randomWord.word)
+                console.log('keepCount:', keepCount)
+                if(keepCount === randomWord.size) io.sockets.emit('winner', `${user().name} won the game!`)
+            }
 
-        console.log('answers: ', answers)
+        // })
+        
+        console.log('users saving answers: ', users)
 
-        socket.broadcast.emit('chat message', {msg: msg, nickname: users[socket.id]})
-    })
+        socket.broadcast.emit('chat message', `${user().name}: ${msg}`)
+    }) 
 
 });
 

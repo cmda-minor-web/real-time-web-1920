@@ -1,16 +1,24 @@
-console.log('it works')
 
-var socket = io();
+const socket = io();
 
-
+const loginScreen = document.querySelector('.login')
+const chatScreen = document.querySelector('.chat')
+const loginForm = document.querySelector('.loginForm')
 const chatForm = document.querySelector('.chatForm')
 const message = document.getElementById('message')
-const nickname = prompt('Your name:')
+const nickname = document.getElementById('nickname')
 const messageList = document.getElementById('messages')
 
-appendMessage('You joined')
+// appendMessage('You joined')
 
-socket.emit('send-nickname', nickname)
+loginForm.addEventListener('submit', (event) => {
+    event.preventDefault()
+    
+    socket.emit('send-nickname', nickname.value)
+    loginScreen.style.display = 'none'
+    chatScreen.style.display = 'block'
+    
+})
 
 chatForm.addEventListener('submit', (event) => {
     event.preventDefault()
@@ -24,13 +32,24 @@ chatForm.addEventListener('submit', (event) => {
 })
 
 
-
 socket.on('chat message', (msg) => {
-    appendMessage(`${msg.nickname}: ${msg.msg}`)
+    appendMessage(msg)
 })
 
 socket.on('user connected', (nickname) => {
-    appendMessage(`${nickname} has entered the room`)
+    appendMessage(nickname)
+})
+
+socket.on('server message', (msg) => {
+    appendMessage(msg)
+})
+
+socket.on('challenge', (word) => {
+    appendMessage(word)
+})
+
+socket.on('winner', (winner) => {
+    appendMessage(winner)
 })
 
 function appendMessage(message){
