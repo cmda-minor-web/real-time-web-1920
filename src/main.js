@@ -1,6 +1,8 @@
 const host = window.location.hostname;
 const port = window.location.port;
-const socket = new WebSocket(`ws://${host}:${port}/send`);
+const protocol = window.location.protocol;
+const wsProtocol = protocol === 'https:' ? 'wss' : 'ws';
+const socket = new WebSocket(`${wsProtocol}://${host}:${port}/send`);
 const chatLog = document.querySelector('ul');
 const name = document.getElementById('name').value;
 
