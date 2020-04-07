@@ -29,6 +29,7 @@ app.ws ( '/send', ( ws, req ) => {
                 } else {
                     message.source = 'other';
                 }
+                message.user = ws.user;
                 wsClient.send ( JSON.stringify ( message ) )
             } );
         } else if ( message.type === 'LOGIN' ) {
