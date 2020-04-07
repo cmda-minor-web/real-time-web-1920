@@ -4,7 +4,8 @@ require ( 'express-ws' ) ( app );
 const bodyParser = require ( 'body-parser' );
 require ( 'dotenv' ).config ();
 const port = process.env.PORT || 3000;
-let counter = -1;
+let userCounter = -1;
+let msgCounter = -1;
 // const MongoClient = require ( 'mongodb' ).MongoClient;
 // const uri = `mongodb+srv://${ process.env.MONGODB_USER }:${ process.env.MONGODB_PASSWORD }@${ process.env.MONGODB_SERVER }/rtw1920?retryWrites=true&w=majority`;
 // const client = new MongoClient ( uri, { useNewUrlParser: true, useUnifiedTopology: true } );
@@ -19,10 +20,11 @@ app.use ( bodyParser.json () );
 app.use ( express.static ( 'static' ) );
 
 app.ws ( '/send', ( ws, req ) => {
-    ++counter;
+    ++userCounter;
     ws.on ( 'message', function ( msg ) {
         const message = JSON.parse ( msg );
         if ( message.type === 'CHATMESSAGE' ) {
+            ++msgCounter;
             wsClients.forEach ( wsClient => {
                 if ( wsClient.uuid === ws.uuid ) {
                     message.source = 'own';
@@ -30,16 +32,26 @@ app.ws ( '/send', ( ws, req ) => {
                     message.source = 'other';
                 }
                 message.user = ws.user;
+                message.id = msgCounter;
                 wsClient.send ( JSON.stringify ( message ) )
             } );
         } else if ( message.type === 'LOGIN' ) {
-            console.log ( counter );
+            message.user = message.user.split(' ').map((word, i) => {
+                if (i > 0) return word[0].toUpperCase() + word.substr(1);
+                else return word
+            }).join('');
             ws.user = message.user;
-            ws.uuid = counter;
+            ws.uuid = userCounter;
             wsClients.push ( ws );
             wsClients.forEach ( wsClient => {
                 wsClient.send ( JSON.stringify ( message ) );
             } );
+        } else if (message.type === 'DRAW') {
+            wsClients.forEach(wsClient => {
+                if (wsClient.uuid !== ws.uuid) {
+                    wsClient.send(JSON.stringify(message))
+                }
+            })
         } else {
             ws.send(JSON.stringify({
                 type: 'PINGPONG',
