@@ -3,8 +3,6 @@
 
 [link to deploy][screenshot of website]
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/9aec17a8-142c-40c1-a2b2-ad3e73f9f652/deploy-status)](https://app.netlify.com/sites/rtw/deploys)
-
 
 <details>
   <summary><strong>Table of Contents</strong> (click to expand)</summary>
@@ -15,20 +13,21 @@
 - [📋 Concept](#---concept)
 - [👯🏿‍ Features (+ wishlist)](#------features----wishlist-)
 - [⚙️ Installation](#---installation)
+    + [Dependencies](#dependencies)
 - [🧑🏼‍ Actor Diagram](#------actor-diagram)
 - [↔️ Interaction diagram](#---interaction-diagram)
 - [🌍 Design patterns](#---design-patterns)
 - [👍🏽 Best practices](#-----best-practices)
 - [🗃 Data](#---data)
-  * [🐒 API](#---github-api)
-    + [Endpoint(s)](#endpoint-s-)
+  * [🐒 API](#---api)
+    + [Properties](#properties)
     + [Rate limiting](#rate-limiting)
   * [💽 Data cleaning](#---data-cleaning)
 - [🏫 Assignment](#---assignment)
   * [Learning goals](#learning-goals)
-  * [Week 1 - Hello Server 🐒](#week-1---hello-api---)
-  * [Week 2 - Sharing is caring 🛠](#week-2---design-and-refactor---)
-  * [Week 3 - Let’s take this show on the road 🎁](#week-3---wrapping-up---)
+  * [Week 1 - Hello Server 📤](#week-1---hello-server---)
+  * [Week 2 - Sharing is caring 👯](#week-2---sharing-is-caring---)
+  * [Week 3 - Let’s take this show on the road 🛣️](#week-3---let-s-take-this-show-on-the-road----)
   * [Rubric](#rubric)
 - [ℹ️ Resources](#---resources)
   * [Credits](#credits)
@@ -43,7 +42,7 @@
 - [x] Init readme
 - [x] Init wiki
 - [ ] Tutorial socket.io
-
+- [x] Write out documentation of lectures in week 1
 
 
 ## 📋 Concept
@@ -54,7 +53,6 @@ _What does your app do, what is the goal? (passing butter)_
 
 **Multiple contributors**
 - Users can add things to household shopping list
-
 
 **Effects**
 - Trigger on-screen effects when a specific word is used (for example: `fireworks`)
@@ -155,13 +153,13 @@ outcome:
 ## 🏫 Assignment
 <details>
   <summary></strong> (click to expand)</summary>
-> During this course you will learn how to build a meaningful real-time application. You will learn techniques to setup an open connection between the client and the server. This will enable you to send data in real-time both ways, at the same time.
+> During this course I have learned how to build a meaningful real-time application. I have learned techniques to setup an open connection between the client and the server. This enabled me to send data in real-time both ways, at the same time.
 
 
 ### Learning goals
 
 - _You can deal with real-time complexity_
-- _You can handle real-time client-server interaction
+- _You can handle real-time client-server interaction_
 - _You can handle real-time data management_
 - _You can handle multi-user support_
 
