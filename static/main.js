@@ -1,4 +1,6 @@
-const socket = new WebSocket('ws://localhost:3000/send');
+const host = window.location.hostname;
+const port = window.location.port;
+const socket = new WebSocket(`ws://${host}:${port}/send`);
 const chatLog = document.querySelector('ul');
 const name = document.getElementById('name').value;
 
@@ -16,6 +18,8 @@ socket.onmessage = e => {
                 </li>` );
     } else if (message.type === 'LOGIN'){
         chatLog.insertAdjacentHTML('beforeend', `<li class="welcome">${escapeHtml(message.user)} has joined the chat</li>`);
+    } else if (message.type === 'LOGOUT'){
+        chatLog.insertAdjacentHTML('beforeend', `<li class="welcome">${escapeHtml(message.user)} has left the chat</li>`);
     }
 };
 

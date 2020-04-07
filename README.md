@@ -2,6 +2,14 @@
 
 During this course you will learn how to build a **meaningful** real-time application. You will learn techniques to setup an open connection between the client and the server. This will enable you to send data in real-time both ways, at the same time.
 
+## Packages
+ - `express-ws`
+    * For this project I wanted to make use of websockets without the socket.io package since it does a lot of (great) things in the background,
+    that I want to learn or do for myself for once. The `express-ws` is still an abstraction layer over the native node `ws` package,
+    this abstraction however is very small. It handles the link between the websocket and the http server, sends a status code on connection and
+    implements a router that accepts human-readable strings instead of regular expressions. These are not the functionalities I want to focus on
+    learning.
+
 ## Goals
 - _Deal with real-time complexity_
 - _Handle real-time client-server interaction_
