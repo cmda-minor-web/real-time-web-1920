@@ -40,7 +40,10 @@ app.ws ( '/send', ( ws, req ) => {
                 wsClient.send ( JSON.stringify ( message ) );
             } );
         } else {
-            console.log ( msg );
+            ws.send(JSON.stringify({
+                type: 'PINGPONG',
+                content:'PONG'
+            }));
         }
     } );
 

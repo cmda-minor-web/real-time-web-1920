@@ -160,10 +160,11 @@ form#signin button {
 #messages li.other p {
     margin-left: 0.5em;
     background: var(--primary);
-    color: var(--secondary);
+    color: var(--succes);
 }
 
 #messages li.welcome {
+    margin-bottom: 0.2em;
     background: none;
     color: var(--primary);
 }
