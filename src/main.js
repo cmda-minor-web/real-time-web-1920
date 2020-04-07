@@ -139,17 +139,27 @@ function enableDrawing ( canvas ) {
     canvas.addEventListener ( 'mouseup', ( e ) => {
         canvasEvents ( e )
     }, false );
+    canvas.addEventListener ( 'mouseleave', ( e ) => {
+        canvasEvents ( e )
+    }, false );
+    canvas.addEventListener ( 'touchstart', ( e ) => {
+        canvasEvents ( e )
+    }, false );
+    canvas.addEventListener ( 'touchmove', ( e ) => {
+        canvasEvents ( e )
+    }, false );
+    canvas.addEventListener ( 'touchend', ( e ) => {
+        canvasEvents ( e )
+    }, false );
 
     function Pencil () {
         this.started = false;
-        this.mousedown = ( e ) => {
-            console.log ( this );
+        this.mousedown = e => {
             ctx.beginPath ();
             ctx.moveTo ( e._x, e._y );
             this.started = true;
         };
-        this.mousemove = ( e ) => {
-            console.log ( this );
+        this.mousemove = e => {
             if ( this.started ) {
                 ctx.lineTo ( e._x, e._y );
                 ctx.stroke ();
@@ -160,12 +170,30 @@ function enableDrawing ( canvas ) {
                 } ) )
             }
         };
-        this.mouseup = ( e ) => {
+        this.mousemove = e => {
+            if ( this.started ) {
+                ctx.lineTo ( e._x, e._y );
+                ctx.stroke ();
+                socket.send ( JSON.stringify ( {
+                    type: 'DRAW',
+                    canvas: canvas.itemId,
+                    data: canvas.toDataURL ()
+                } ) )
+            }
+        };
+        this.mouseup = e => {
             if ( this.started ) {
                 this.mousemove ( e );
                 this.started = false;
             }
-        }
+        };
+        this.mouseleave = e => {
+            this.started = false
+        };
+
+        this.touchstart = this.mousedown;
+        this.touchmove = this.mousemove;
+        this.touchend = this.mouseleave
     }
 
     function canvasEvents ( e ) {
