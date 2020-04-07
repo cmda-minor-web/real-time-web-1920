@@ -1,6 +1,10 @@
-# Real-Time Web @cmda-minor-web · 2019-2020
+# [Live Demo](https://anon-says-herokuapp.com)
+# Draw chat
+As an excercise to practice with websockets I created a chat service that let's you choose a username and talk to each other.
+All data is send over the wss protocol client-to-server and then server-to-client so it is completely anonymous.
+There is an option to start drawing with `/draw` which streams HTML canvas data so all users can see your amazing drawings
 
-During this course you will learn how to build a **meaningful** real-time application. You will learn techniques to setup an open connection between the client and the server. This will enable you to send data in real-time both ways, at the same time.
+![Screenshot](./docs/imgs/scnrsht1.png)
 
 ## Packages
  - `express-ws`
@@ -15,35 +19,6 @@ During this course you will learn how to build a **meaningful** real-time applic
 - _Handle real-time client-server interaction_
 - _Handle real-time data management_
 - _Handle multi-user support_
-
-[Rubric][rubric]
-
-## Curriculum
-
-### Week 1 - Hello Server
-
-Goal: Build and deploy a unique barebone real-time app  
-
-[Exercises](https://github.com/cmda-minor-web/real-time-web-1920/blob/master/course/week-1.md)    
-[Slides](https://docs.google.com/presentation/d/1Q_2EpEnW53G-DiRYtfp1VRYHdLJYJ7bjoLxAWhGbW-0/edit?usp=sharing)  
-
-
-### Week 2 - Sharing is caring  
-
-Goal: Store, manipulate and share data between server-client   
-
-[Exercises](https://github.com/cmda-minor-web/real-time-web-1920/blob/master/course/week-2.md)    
-[Slides](https://docs.google.com/presentation/d/1p_P-rciWJQ2BMgveOYNTcwEJHh1yxB1-HqKZhiD8kkk/edit?usp=sharing)
-
-
-### Week 3 - Let’s take this show on the road 
-
-Goal: Handle data sharing and multi-user support 
-
-[Exercises](https://github.com/cmda-minor-web/real-time-web-1920/blob/master/course/week-3.md)  
-[Slides](https://drive.google.com/open?id=19GE6r1jha3gX-uhQI0NIv09klTT45BihuELqZSEa2_8)
-
-> If you're seeing this message on a forked repo, it means one of our students hasn't changed the description yet 😈
 
 <!-- Add a link to your live demo in Github Pages 🌐-->
 
