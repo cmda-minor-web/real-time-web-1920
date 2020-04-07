@@ -59,7 +59,9 @@ function ping (socket) {
 }
 
 function send(object) {
-    socket.send(JSON.stringify(object));
+    window.setTimeout(() => {
+        socket.send(JSON.stringify(object));
+    }, 1000);
 }
 
 function insertMessage (message) {
