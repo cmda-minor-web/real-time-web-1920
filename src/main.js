@@ -113,22 +113,22 @@ function renderDrawing ( message ) {
 
 //From example at https://dev.opera.com/articles/html5-canvas-painting/
 function enableDrawing ( canvas ) {
+    const pencil = new Pencil ();
     if ( !canvas ) {
         console.error ( 'Failed to get Canvas element' );
         return;
     } else if ( !canvas.getContext ) {
         console.error ( 'Failed canvas.getContext' );
         return;
-    } else if ( !ctx ) {
+    }
+    const ctx = canvas.getContext ( '2d' );
+    if ( !ctx ) {
         console.error ( 'Failed to get Context' );
         return;
     } else if ( !pencil ) {
         console.error ( 'Failed to get pencil' );
         return;
     }
-
-    const ctx = canvas.getContext ( '2d' );
-    const pencil = new Pencil ();
 
     canvas.addEventListener ( 'mousedown', ( e ) => {
         canvasEvents ( e )
