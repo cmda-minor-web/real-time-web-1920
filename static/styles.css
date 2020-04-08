@@ -128,6 +128,7 @@ form#signin button {
     border: none;
     padding: 10px;
 }
+
 #messages li{
     word-break: break-word;
     max-width: 1000px;

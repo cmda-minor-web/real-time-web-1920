@@ -74,7 +74,7 @@ function init() {
             const canvas = document.createElement ( 'canvas' ),
                 item = document.createElement ( 'li' ),
                 name = document.createElement ( 'em' );
-            name.innerHTML = `<img src="https://unavatar.now.sh/github/${ message.user }" alt="Unavatar avatar">${ escapeHtml ( message.user ) }`;
+            name.innerHTML = `<img src="https://unavatar.now.sh/github/${ escapeHtml(message.user) }" alt="Unavatar avatar">${ escapeHtml ( message.user ) }`;
             canvas.setAttribute ( 'width', 400 );
             canvas.setAttribute ( 'height', 300 );
             canvas.itemId = message.id;
@@ -87,7 +87,7 @@ function init() {
         } else {
             chatLog.insertAdjacentHTML ( 'beforeend',
                 `<li id="c${ message.id }" class="${ message.source }">
-                    <em><img src="https://unavatar.now.sh/github/${ message.user }" alt="Unavatar avatar">${ escapeHtml ( message.user ) }</em>
+                    <em><img src="https://unavatar.now.sh/github/${ escapeHtml(message.user) }" alt="Unavatar avatar">${ escapeHtml ( message.user ) }</em>
                     <p>${ escapeHtml ( message.content ) }</p>
                 </li>` );
         }
