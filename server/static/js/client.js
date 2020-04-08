@@ -24,7 +24,7 @@ chatForm.addEventListener('submit', (event) => {
     event.preventDefault()
 
     if(message.value != ''){
-    appendMessage(`You: ${message.value}`)
+    appendMessage(`You: ${message.value}`, 'yourMessage')
     socket.emit('chat message', message.value)
     message.value = ''
     }
@@ -33,29 +33,31 @@ chatForm.addEventListener('submit', (event) => {
 
 
 socket.on('chat message', (msg) => {
-    appendMessage(msg)
+    appendMessage(msg, 'incomingMessage')
 })
 
 socket.on('user connected', (nickname) => {
-    appendMessage(nickname)
+    appendMessage(nickname, 'serverNotification')
 })
 
 socket.on('server message', (msg) => {
-    appendMessage(msg)
+    appendMessage(msg, 'serverMessage')
 })
 
 socket.on('challenge', (word) => {
-    appendMessage(word)
+    appendMessage(word, 'serverMessage')
 })
 
 socket.on('winner', (winner) => {
     appendMessage(winner)
 })
 
-function appendMessage(message){
+function appendMessage(message, classToBeAdded){
     
     let li = document.createElement('li')
+    li.className = classToBeAdded
     li.appendChild(document.createTextNode(message))
 
     messageList.appendChild(li)
 }
+

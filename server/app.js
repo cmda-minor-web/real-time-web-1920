@@ -33,6 +33,10 @@ function countInArray(array, what) {
     return array.filter(item => item == what).length;
 }
 
+function findUser(array, socket){
+    return array.find(user => user.id == socket.id)
+}
+
 app
     .use(express.static(path.join(__dirname, 'static')))
     .get('/', router.homeRoute)
@@ -45,13 +49,12 @@ io.on('connection', (socket) => {
     let randomWord = words[Math.floor(Math.random() * words.length)]
 
     socket.on('send-nickname', (nickname) => {
-        // users[socket.id] = nickname
+
         users.push({id: socket.id, name: nickname, answers: []})
         
         socket.broadcast.emit('user connected', `${user().name} entered the room`)
         connectCounter++
         
-
         if(connectCounter === 2){
             io.sockets.emit('challenge', `The word is: ${randomWord.word}`)
         }
@@ -69,15 +72,12 @@ io.on('connection', (socket) => {
 
     socket.on('chat message', (msg) => {
 
-        // users.find(user => {
-            if(user().id == socket.id){
-                user().answers.push(msg)
-                let keepCount = countInArray(user().answers, randomWord.word)
-                console.log('keepCount:', keepCount)
-                if(keepCount === randomWord.size) io.sockets.emit('winner', `${user().name} won the game!`)
-            }
-
-        // })
+        if(user().id == socket.id){
+            user().answers.push(msg)
+            let keepCount = countInArray(user().answers, randomWord.word)
+            console.log('keepCount:', keepCount)
+            if(keepCount === randomWord.size) io.sockets.emit('winner', `${user().name} won the game!`)
+        }
         
         console.log('users saving answers: ', users)
 

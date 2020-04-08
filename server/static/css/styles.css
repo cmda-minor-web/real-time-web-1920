@@ -29,14 +29,58 @@ form button {
   list-style-type: none;
   margin: 0;
   padding: 0;
+  padding: 1rem;
 }
-#messages li {
+/* #messages li {
   padding: 5px 10px;
-}
-#messages li:nth-child(odd) {
+} */
+/* #messages li:nth-child(odd) {
   background: #eee;
-}
+} */
 
 .chat{
     display: none;
+}
+
+.serverMessage{
+    width: 100%;
+    font-size: 1rem;
+    background: seagreen;
+    color: white;
+    padding: 1rem;
+    border-radius: .2rem;
+    margin: 0 auto;
+}
+
+.yourMessage{
+    display: block;
+    width: 40%;
+    font-size: 1rem;
+    background: lightskyblue;
+    color: black;
+    padding: 1rem;
+    border-radius: .2rem;
+    float: right;
+    margin-left: 25%;
+    margin-top: 4%;
+}
+
+.incomingMessage{
+    display: block;
+    width: 40%;
+    font-size: 1rem;
+    background: lightgreen;
+    color: black;
+    padding: 1rem;
+    border-radius: .2rem;
+    float: left;
+    margin-right: 25%;
+    margin-top: 4%;
+}
+
+.serverNotification{
+    width: 100%;
+    background: white;
+    padding: 1rem;
+    color: black;
 }
