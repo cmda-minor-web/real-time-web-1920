@@ -12,6 +12,6 @@ io.on('connection', function(socket) {
   console.log('a user connected')
 })
 
-http.listen(3000, function() {
-  console.log(`Example app listening on port ${port}!`)
+http.listen(port, function() {
+  console.log(`App listening on port ${port}!`)
 })
