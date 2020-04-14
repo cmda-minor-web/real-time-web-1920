@@ -15,6 +15,7 @@ app.get('/', function(req, res) {
 
 io.on('connection', function(socket) {
 
+
   socket.on('user_join', function(data) {
     this.username = data
     socket.broadcast.emit('user_join', data)
@@ -23,12 +24,19 @@ io.on('connection', function(socket) {
   socket.on('chat_message', function(data) {
     data.username = this.username
     socket.broadcast.emit('chat_message', data)
+    const message = data.message
+    checkMessage(message)
+
   })
 
   socket.on('disconnect', function(data) {
     socket.broadcast.emit('user_leave', this.username)
   })
 })
+
+function checkMessage(message) {
+  console.log(message)
+}
 
 http.listen(port, function() {
   console.log('Listening on *:' + port)
