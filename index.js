@@ -2,7 +2,26 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
+const MongoClient = require('mongodb').MongoClient
+const url = 'mongodb://127.0.0.1:27017'
+
 const port = process.env.PORT || 3000
+
+const dbName = 'chat-quote-list'
+let db
+
+MongoClient.connect(url, {
+  useNewUrlParser: true
+}, (err, client) => {
+  if (err) return console.log(err)
+
+  // Storing a reference to the database so you can use it later
+  db = client.db(dbName)
+  console.log(`Connected MongoDB: ${url}`)
+  console.log(`Database: ${dbName}`)
+})
+
+
 
 
 app.use(express.static('public'));
@@ -34,12 +53,14 @@ io.on('connection', function(socket) {
   })
 })
 
+
 function checkMessage(message) {
   const addquote = "/addquote" || ".addquote"
-  if (message.includes(addquote[0, 0])) {
-    console.log("klopt")
-  } else {
-    console.log("nope")
+  if (message.includes(addquote)) {
+    console.log("gooiquote")
+  }
+   else {
+    console.log("niets")
   }
 }
 
