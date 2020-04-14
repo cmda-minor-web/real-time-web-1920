@@ -22,7 +22,7 @@ MongoClient.connect(url, {
   findQuotes(db)
 })
 
-const findQuotes = function(db) {
+const getQuotes = function(db) {
   const collection = db.collection('quotes');
   collection.find({}).toArray(function(err, docs) {
     console.log("Found the following records");
