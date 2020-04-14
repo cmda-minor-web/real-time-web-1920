@@ -1,4 +1,4 @@
-### [Live Demo](https://anon-says-herokuapp.com)
+<!-- ### [Live Demo](https://anon-says-herokuapp.com) -->
 
 # Multiplayer HTML5 webgl2
 
