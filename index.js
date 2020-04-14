@@ -19,7 +19,7 @@ MongoClient.connect(url, {
   db = client.db(dbName)
   console.log(`Connected MongoDB: ${url}`)
   console.log(`Database: ${dbName}`)
-  findQuotes(db)
+  getQuotes(db)
 })
 
 const getQuotes = function(db) {
