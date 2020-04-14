@@ -1,7 +1,8 @@
 # Real-Time Web @cmda-minor-web · 2019-2020
-# Project title
+# Twitter fights
 
-[link to deploy][screenshot of website]
+https://real-time-dingen.herokuapp.com/
+[screenshot of website]
 
 
 <details>
