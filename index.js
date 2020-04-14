@@ -60,11 +60,14 @@ io.on('connection', function(socket) {
   })
 })
 
-
 function checkMessage(message) {
   const addquote = "/addquote" || ".addquote"
+  const quote = "/quote" || ".quote"
   if (message.includes(addquote)) {
     console.log("gooiquote")
+  }
+  else if (message.includes(quote)) {
+    console.log("krijgquote")
   }
    else {
     console.log("niets")
