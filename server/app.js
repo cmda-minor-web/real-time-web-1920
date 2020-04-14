@@ -7,6 +7,25 @@ const express = require('express')
 const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server)
+const fetch = require('node-fetch')
+
+
+const options = {
+  "method": "GET",
+  "hostname": "https://api.schiphol.nl/public-flights",
+  "port": null,
+  "path": "/flights",
+  "headers": {
+    "Accept": "application/json",
+    "resourceversion": "v4",
+	"app_id": process.env.APP_ID,
+	"app_key": process.env.APP_KEY
+  }
+};
+
+fetch('https://api.schiphol.nl/public-flights/aircrafttypes?page=0&sort=%2BiataMain', options)
+    .then(res => res.json())
+    .then(data => console.log('data: ', data))
 
 const words = [
     {
@@ -24,6 +43,7 @@ nunjucks.configure(`${__dirname}/view/pages`, {
     autoescape: true,
     express: app
 });
+
 
 const users = []
 let connectCounter = 0
@@ -85,6 +105,7 @@ io.on('connection', (socket) => {
     }) 
 
 });
+
 
 server.listen(port, () => {
     console.log(`Dev app listening on port: ${port}`)

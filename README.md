@@ -1,6 +1,8 @@
-# Chat game
+# Real Time Web
 
-The app gives players a word which has a large size. Who's word dissapears first by typing this word as many times as possible wins.
+List of API's i might want to use: 
 
-Makes use of D3 an D3 cloud libraries
-
+* [NY times](https://developer.nytimes.com/apis)
+* [Medium](https://github.com/Medium/medium-api-docs)
+* [Spotify](https://developer.spotify.com/)
+* [Schiphol](https://www.schiphol.nl/nl/developer-center/pagina/explore-all-schiphols-apis-in-the-developer-center/)

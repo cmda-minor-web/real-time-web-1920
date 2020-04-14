@@ -49,7 +49,7 @@ socket.on('challenge', (word) => {
 })
 
 socket.on('winner', (winner) => {
-    appendMessage(winner)
+    appendMessage(winner, 'winnerMessage')
 })
 
 function appendMessage(message, classToBeAdded){
