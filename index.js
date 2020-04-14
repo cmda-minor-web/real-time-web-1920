@@ -19,9 +19,16 @@ MongoClient.connect(url, {
   db = client.db(dbName)
   console.log(`Connected MongoDB: ${url}`)
   console.log(`Database: ${dbName}`)
+  findQuotes(db)
 })
 
-
+const findQuotes = function(db) {
+  const collection = db.collection('quotes');
+  collection.find({}).toArray(function(err, docs) {
+    console.log("Found the following records");
+    console.log(docs)
+  });
+}
 
 
 app.use(express.static('public'));
