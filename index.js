@@ -64,10 +64,10 @@ function checkMessage(message) {
   const addquote = "/addquote" || ".addquote"
   const quote = "/quote" || ".quote"
   if (message.includes(addquote)) {
-    console.log("gooiquote")
+    console.log("addQuote")
   }
   else if (message.includes(quote)) {
-    console.log("krijgquote")
+    console.log("getQuote")
   }
    else {
     console.log("niets")
