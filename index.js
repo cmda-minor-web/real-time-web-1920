@@ -35,9 +35,14 @@ io.on('connection', function(socket) {
 })
 
 function checkMessage(message) {
-  console.log(message)
+  const addquote = "/addquote" || ".addquote"
+  if (message.includes(addquote[0, 0])) {
+    console.log("klopt")
+  } else {
+    console.log("nope")
+  }
 }
 
 http.listen(port, function() {
-  console.log('Listening on *:' + port)
+  console.log('App listening on: ' + port)
 })
