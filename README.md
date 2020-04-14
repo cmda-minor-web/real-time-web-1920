@@ -1,5 +1,5 @@
 # Real-Time Web @cmda-minor-web · 2019-2020
-# Twitter fights
+# Twitter Feuds
 
 https://real-time-dingen.herokuapp.com/
 [screenshot of website]
