@@ -47,7 +47,9 @@ https://real-time-dingen.herokuapp.com/
 
 
 ## 📋 Concept
-_What does your app do, what is the goal? (passing butter)_
+_What does your app do, what is the goal? (passing butter)_ 
+
+### Chatroom with unique feature (ideas)
 **Chatbot**
 - Users can add quotes to a quotelist, then request a random one via the `quote`-command.
 - Chatbot responds with quotes when specific words are used (kinda like _Slackbot_-responses)
@@ -57,6 +59,9 @@ _What does your app do, what is the goal? (passing butter)_
 
 **Effects**
 - Trigger on-screen effects when a specific word is used (for example: `fireworks`)
+
+### Twitter fights
+Compare the follower count of two rivaling twitter accounts over time, and see which one is winning in popularity.
 
 ## 👯🏿‍ Features (+ wishlist)
 _What would you like to add (feature wishlist / backlog)?_
