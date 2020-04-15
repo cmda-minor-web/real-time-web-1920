@@ -21,6 +21,10 @@ socket.on("chat_message", function(data) {
   addMessage(data.username + ": " + data.message)
 })
 
+socket.on("chat_quote", function(data) {
+  addMessage("Quotebot: " + data)
+})
+
 socket.on("user_join", function(data) {
   addMessage(data + " just walked into the chat!")
 })
@@ -29,7 +33,7 @@ socket.on("user_leave", function(data) {
   addMessage(data + " has left the chat.")
 })
 
-addMessage("You have joined the chat x '" + username + "'.")
+addMessage("You have joined the chat as '" + username + "'.")
 socket.emit("user_join", username)
 
 function addMessage(message) {
