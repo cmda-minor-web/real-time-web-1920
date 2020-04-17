@@ -56,28 +56,34 @@ io.on('connection', socket => {
     const quote = "/quote" || ".quote"
     if (message.includes(addquote)) {
       console.log("addQuote")
+      addQuote(db, message)
     }
     else if (message.includes(quote)) {
       console.log("getQuote")
       getQuotes(db)
     }
      else {
-      console.log("niets")
+
     }
   }
 
   function getQuotes(db) {
     const collection = db.collection('quotes')
-    const ding = db.collection('quotes').aggregate([{$sample:{size:1}}])
+    const oneQuote = db.collection('quotes').aggregate([{$sample:{size:1}}])
 
-    ding.toArray(function(err, docs) {
-      console.log("Found the following records")
-      console.log(docs[0].name)
+    oneQuote.toArray(function(err, docs) {
       const oneQuote = docs[0].name
       socket.emit("chat_quote", oneQuote)
-
     })
   }
+
+
+    function addQuote(db, message) {
+      const collection = db.collection('quotes')
+      collection.insertOne( { name: message} );
+      console.log("quote added")
+
+    }
 
 })
 
