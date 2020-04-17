@@ -73,16 +73,20 @@ io.on('connection', socket => {
 
     oneQuote.toArray(function(err, docs) {
       const oneQuote = docs[0].name
+      console.log(oneQuote)
       socket.emit("chat_quote", oneQuote)
     })
   }
 
 
     function addQuote(db, message) {
-      const collection = db.collection('quotes')
-      collection.insertOne( { name: message} );
-      console.log("quote added")
+      const quote = message.substring(9)
+      const cleanQuote = quote.trim()
 
+
+      const collection = db.collection('quotes')
+      collection.insertOne( { name: cleanQuote} )
+      socket.emit("chat_quote", `Added "${cleanQuote}". I'm amazing, right?`)
     }
 
 })

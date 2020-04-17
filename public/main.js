@@ -21,7 +21,7 @@ socket.on("chat_message", function(data) {
   addMessage(data.username + ": " + data.message)
 })
 
-socket.on("chat_quote", function(quote) {
+socket.on("chat_quote", function(data) {
   addMessage("Quotebot: " + data)
 })
 
