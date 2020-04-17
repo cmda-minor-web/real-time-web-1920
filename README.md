@@ -40,10 +40,7 @@ https://real-time-dingen.herokuapp.com/
 </details>
 
 ## ✅ To-do
-- [x] Init readme
-- [x] Init wiki
-- [ ] Tutorial socket.io
-- [x] Write out documentation of lectures in week 1
+
 
 ![](https://github.com/deannabosschert/real-time-web-1920/blob/master/public/img/documentation/Note%2017%20Apr%202020%2012_03_50.jpg)
 
