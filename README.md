@@ -42,6 +42,7 @@ To install this application follow these steps:
 ## Data lifecycle
 ![Data lifecycle](./docs/dlc.png)
 
+
 ### Packages & Services
 
 This project makes use of the following tech:
@@ -83,6 +84,7 @@ Core features of this project.
 ## License 🔓
 
 MIT © [Bas de Greeuw](https://github.com/aaraar)
+
 
 <!-- Add a link to your live demo in Github Pages 🌐-->
 
