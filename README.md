@@ -7,6 +7,7 @@
 - [To do](#to-do-)
 - [Description](#description-)
 - [Installing](#installing-)
+- [Data Lifecycle Diagram](#data-lifecycle)
 - [Packages & Services](#packages--services)
 - [How it works](#how-it-works-)
 - [Technologies Used](#technologies-used-)
@@ -37,6 +38,9 @@ To install this application follow these steps:
 - `yarn` / `npm install`
 - `yarn start`
   - Run `yarn watch` & `yarn dev` concurrently for development
+  
+## Data lifecycle
+![Data lifecycle](./docs/dlc.png)
 
 ### Packages & Services
 
