@@ -16,7 +16,6 @@ MongoClient.connect(url, {
 }, (err, client) => {
   if (err) return console.log(err)
 
-  // Storing a reference to the database so you can use it later
   db = client.db(dbName)
   console.log(`Connected MongoDB: ${url}`)
   console.log(`Database: ${dbName}`)
@@ -44,10 +43,9 @@ io.on('connection', socket => {
     checkMessage(message)
   })
 
-  // socket.on('chat_quote', function(docs) {
-  //   console.log('test')
-  //   socket.broadcast.emit(docs[0])
-  // })
+  socket.on('chat_quote', function(docs) {
+    socket.broadcast.emit('chat_quote', docs)
+  })
 
   socket.on('disconnect', data => {
     socket.broadcast.emit('user_leave', this.username)
@@ -70,10 +68,13 @@ io.on('connection', socket => {
 
   function getQuotes(db) {
     const collection = db.collection('quotes')
-    collection.find({}).toArray(function(err, docs) {
+    const ding = db.collection('quotes').aggregate([{$sample:{size:1}}])
+
+    ding.toArray(function(err, docs) {
       console.log("Found the following records")
-      console.log(docs)
-      socket.emit("chat_quote", docs[3].name)
+      console.log(docs[0].name)
+      const oneQuote = docs[0].name
+      socket.emit("chat_quote", oneQuote)
 
     })
   }
