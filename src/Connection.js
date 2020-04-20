@@ -1,4 +1,5 @@
 export default function Connection() {
+	this.players = [];
 	this.host = window.location.hostname;
 	this.port = window.location.port;
 	this.protocol = window.location.protocol;
@@ -100,7 +101,7 @@ export default function Connection() {
 		this.socket.send(
 			JSON.stringify({
 				type: "MOVEMENT",
-				player: player,
+				player: {position: player.position, rotation: player.rotation},
 			})
 		);
 	};
