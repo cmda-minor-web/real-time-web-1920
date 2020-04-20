@@ -60,8 +60,7 @@ app.ws("/join", (ws, req) => {
 				wsClient.send(
 					JSON.stringify({
 						type: "LOGOUT",
-						user: ws.user,
-						uuid: ws.uuid,
+						user: ws.uuid,
 					})
 				);
 			}

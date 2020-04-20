@@ -96,16 +96,6 @@ export default function Connection() {
 		);
 	};
 
-	this.renderDrawing = (message) => {
-		const canvas = document.querySelector(`#c${message.canvas} canvas`);
-		const ctx = canvas.getContext("2d");
-		const img = new Image();
-		img.onload = function () {
-			ctx.drawImage(img, 0, 0); // Or at whatever offset you like
-		};
-		img.src = message.data;
-	};
-
 	this.echoPosition = (player) => {
 		this.socket.send(
 			JSON.stringify({

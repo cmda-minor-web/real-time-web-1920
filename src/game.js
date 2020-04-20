@@ -16,14 +16,22 @@ function connect() {
 }
 
 function init(connection) {
+	let players = [];
 	connection.socket.onmessage = (e) => {
 		const message = JSON.parse(e.data);
 		if (message.type === "MOVEMENT") {
+			const movedPlayer = scene.getObjectByName(`player${message.user}`);
 			console.log(message);
+			// movedPlayer.object.position = message.mesh.object.position;
 		} else if (message.type === "LOGIN") {
-			console.log(message);
+			players.push({ uuid: message.user, mesh: message.mesh });
+			const playerMesh = message.mesh;
+			playerMesh.name = `player${player.uuid}`;
+			scene.add(playerMesh);
 		} else if (message.type === "LOGOUT") {
-			console.log(message);
+			players.filter((player) => message.user !== player.uuid);
+			const loggedoutUser = scene.getObjectByName(`player${player.uuid}`);
+			scene.remove(loggedoutUser);
 		} else if (message.type === "PINGPONG") {
 			connection.ping(connection.socket);
 		}
