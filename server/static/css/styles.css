@@ -84,3 +84,8 @@ form button {
     padding: 1rem;
     color: black;
 }
+
+.cards{
+    display: flex;
+    flex-direction: row;
+}

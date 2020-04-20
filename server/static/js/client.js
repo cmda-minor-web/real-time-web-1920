@@ -8,6 +8,8 @@ const chatForm = document.querySelector('.chatForm')
 const message = document.getElementById('message')
 const nickname = document.getElementById('nickname')
 const messageList = document.getElementById('messages')
+const cardsSection = document.querySelector('.cards')
+const gameField = document.querySelector('.gameField')
 
 // appendMessage('You joined')
 
@@ -45,8 +47,61 @@ socket.on('server message', (msg) => {
 })
 
 socket.on('challenge', (word) => {
+    console.log(word)
     appendMessage(word, 'serverMessage')
+})  
+
+
+
+socket.on('cards in hand', (cards) => {
+    console.log('caards: ', cards)
+
+    cards.cards.forEach(card => {
+
+        let cardImage = document.createElement('img')
+
+        cardImage.src = card.image
+        
+        cardImage.className = 'card'
+
+        cardsSection.appendChild(cardImage)        
+        
+    });
+
+const cardsInHand = document.querySelectorAll('.card')
+
+//when card is clicked a broadcast to everyplayer needs to be sent
+cardsInHand.forEach(card => {
+    card.addEventListener('click', (event) => {
+        const clickedCard = event.target.src
+
+        let findCard = cards.cards.find(card => card.image === clickedCard)
+        
+        socket.emit('clicked card', findCard)
+
+
+        gameField.appendChild(event.target)
+        console.log(findCard)
+
+        // clickedCard.remove()
+
+
+
+    })
 })
+
+})
+
+socket.on('clicked card', (card) => {
+    console.log('clicked card: ', card)
+})
+
+// socket.on('show played card', (card) => {
+//     console.log('kaart: ', card)
+// })
+
+// console.log(cardsSection.children)
+
 
 socket.on('winner', (winner) => {
     appendMessage(winner, 'winnerMessage')
