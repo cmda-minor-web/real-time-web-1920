@@ -57,14 +57,8 @@ socket.on('cards in hand', (cards) => {
     console.log('caards: ', cards)
 
     cards.cards.forEach(card => {
-
-        let cardImage = document.createElement('img')
-
-        cardImage.src = card.image
         
-        cardImage.className = 'card'
-
-        cardsSection.appendChild(cardImage)        
+        appendCard(cardsSection, card.image, 'card')
         
     });
 
@@ -77,23 +71,27 @@ cardsInHand.forEach(card => {
 
         let findCard = cards.cards.find(card => card.image === clickedCard)
         
-        socket.emit('clicked card', findCard)
-
-
-        gameField.appendChild(event.target)
-        console.log(findCard)
+        socket.emit('clicked card', findCard, cards)
+        // console.log('maaaa', console.log(indexOf(findCard)))
+        // gameField.appendChild(event.target)
+        // console.log(findCard)
 
         // clickedCard.remove()
 
-
+        event.target.remove()
 
     })
 })
 
 })
 
-socket.on('clicked card', (card) => {
+socket.on('clicked card', (card, cards) => {
     console.log('clicked card: ', card)
+    //Now append the card to the playfield
+
+    appendCard(gameField, card.image, 'playedCard')
+
+    console.log(cards)
 })
 
 // socket.on('show played card', (card) => {
@@ -116,3 +114,14 @@ function appendMessage(message, classToBeAdded){
     messageList.appendChild(li)
 }
 
+function appendCard(section, source, classToBeAdded){
+    let cardImage = document.createElement('img')
+
+    cardImage.src = source
+
+    cardImage.className = classToBeAdded
+
+    section.appendChild(cardImage)
+}
+
+function removeCard(){}
