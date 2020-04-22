@@ -18,7 +18,7 @@ loginForm.addEventListener('submit', (event) => {
     
     socket.emit('send-nickname', nickname.value)
     loginScreen.style.display = 'none'
-    chatScreen.style.display = 'block'
+    gameField.style.display = 'block'
     
 })
 
@@ -67,18 +67,20 @@ const cardsInHand = document.querySelectorAll('.card')
 //when card is clicked a broadcast to everyplayer needs to be sent
 cardsInHand.forEach(card => {
     card.addEventListener('click', (event) => {
-        const clickedCard = event.target.src
+        // const clickedCard = event.target.src
 
-        let findCard = cards.cards.find(card => card.image === clickedCard)
+        // let findCard = cards.cards.find(card => card.image === clickedCard)
         
-        socket.emit('clicked card', findCard, cards)
-        // console.log('maaaa', console.log(indexOf(findCard)))
-        // gameField.appendChild(event.target)
-        // console.log(findCard)
+        // socket.emit('clicked card', findCard, cards)
+        // // console.log('maaaa', console.log(indexOf(findCard)))
+        // // gameField.appendChild(event.target)
+        // // console.log(findCard)
 
-        // clickedCard.remove()
+        // // clickedCard.remove()
 
-        event.target.remove()
+        // event.target.remove()
+        console.log('haahha')
+        findCard(event, cards)
 
     })
 })
@@ -93,6 +95,27 @@ socket.on('clicked card', (card, cards) => {
 
     console.log(cards)
 })
+
+// socket.on('drawn card', (card, cards) => {
+//     console.log('drawn card: ', card)
+
+//     appendCard(cardsSection, card.image, 'card')
+
+//     const cardsInHand = document.querySelectorAll('.card')
+
+//     const newCard = cardsInHand[3]
+//     console.log('new: ', newCard)
+
+//     newCard.addEventListener('click', (event) => {
+//         // console.log('klikkie')
+//         // console.log(cards)
+
+//         findCard(event, cards)
+
+        
+//     })
+
+// })
 
 // socket.on('show played card', (card) => {
 //     console.log('kaart: ', card)
@@ -125,3 +148,27 @@ function appendCard(section, source, classToBeAdded){
 }
 
 function removeCard(){}
+
+function findCard(ev, cards){
+
+    const clickedCard = ev.target.src
+
+    // let findCard = cards.cards.find(card => card.image === clickedCard)
+
+    
+    
+    socket.emit('clicked card', findCardInArray(cards, clickedCard), cards)
+    // console.log('maaaa', console.log(indexOf(findCard)))
+    // gameField.appendChild(event.target)
+    // console.log(findCard)
+
+    // clickedCard.remove()
+
+    event.target.remove()
+
+}
+
+function findCardInArray(array, cardToBeFound){
+    return foundCard = array.cards.find(card => card.image === cardToBeFound)
+
+}
