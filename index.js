@@ -2,24 +2,46 @@ const express = require('express')
 const app = express()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
-const MongoClient = require('mongodb').MongoClient
-const url = 'mongodb://127.0.0.1:27017'
+const { MongoClient } = require("mongodb");
 
 
-const port = process.env.PORT || 3000
+require('dotenv').config()
 
-const dbName = 'chat-quote-list'
-let db
+const port = process.env.PORT
+const url = process.env.MNG_URL
+const dbName = process.env.DB_NAME
+const client = new MongoClient(url)
 
-MongoClient.connect(url, {
-  useNewUrlParser: true
-}, (err, client) => {
-  if (err) return console.log(err)
+ async function run() {
+    try {
+         await client.connect();
+         console.log("Connected correctly to server");
+         const db = client.db(dbName);
 
-  db = client.db(dbName)
-  console.log(`Connected MongoDB: ${url}`)
-  console.log(`Database: ${dbName}`)
-})
+         const col = db.collection("chat_quote_list");
+
+         let quote = {
+             "quote": "look at all those chickens"
+         }
+
+         // Insert a single document, wait for promise so we can read it back
+         const p = await col.insertOne(quote);
+         // Find one document
+         const myDoc = await col.findOne();
+         // Print to the console
+         console.log(myDoc);
+
+        } catch (err) {
+         console.log(err.stack);
+     }
+
+     finally {
+        await client.close();
+    }
+}
+
+run().catch(console.dir);
+
 
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
@@ -52,29 +74,32 @@ io.on('connection', socket => {
   })
 
   function checkMessage(message) {
-    const addquote = "/addquote" || ".addquote"
-    const quote = "/quote" || ".quote"
+      const addquote = "/addquote" || ".addquote"
+      const quote = "/quote" || ".quote"
     if (message.includes(addquote)) {
       console.log("addQuote")
-      addQuote(db, message)
+      addQuote(message)
     }
     else if (message.includes(quote)) {
-      console.log("getQuote")
-      getQuotes(db)
+      // console.log("getQuote")
+      getQuote()
     }
      else {
-
     }
   }
 
-  function getQuotes(db) {
-    const collection = db.collection('quotes')
-    const oneQuote = db.collection('quotes').aggregate([{$sample:{size:1}}])
+
+
+
+  function getQuote() {
+    console.log("quote ophalen")
+    const oneQuote = quotes.aggregate([{$sample:{size:1}}])
 
     oneQuote.toArray(function(err, docs) {
-      const oneQuote = docs[0].name
       console.log(oneQuote)
-      socket.emit("chat_quote", oneQuote)
+      // const oneQuote = docs[0].name
+      // console.log(oneQuote)
+      // socket.emit("chat_quote", oneQuote)
     })
   }
 
