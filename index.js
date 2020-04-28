@@ -58,7 +58,7 @@ io.on('connection', socket => {
 
    async function run(trigger, message) {
       // try {
-      const client = new MongoClient(url)
+      const client = new MongoClient(url, {useUnifiedTopology: true})
         await client.connect()
         const db = client.db(dbName)
         const col = db.collection("chat_quote_list")
