@@ -3,14 +3,17 @@
   "version": "0.0.1",
   "description": "Chatroom with chatbot that collects quotes added by users",
   "dependencies": {
-    "ejs": "^3.0.2",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.2",
     "express": "^4.17.1",
-    "heroku": "^7.22.9",
+    "heroku": "^7.39.5",
     "mongodb": "^3.5.6",
-    "socket.io": "^2.3.0"
+    "mongoose": "^5.9.10",
+    "socket.io": "^2.3.0",
+    "validator": "^13.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.3"
   },
   "scripts": {
     "start": "node index.js",

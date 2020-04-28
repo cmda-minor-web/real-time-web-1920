@@ -2,31 +2,28 @@ const express = require('express')
 const app = express()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
-const MongoClient = require('mongodb').MongoClient
-const url = 'mongodb://127.0.0.1:27017'
+const {
+  MongoClient
+} = require("mongodb")
 
 
-const port = process.env.PORT || 3000
+require('dotenv').config()
 
-const dbName = 'chat-quote-list'
-let db
+const port = process.env.PORT
+const url = process.env.MNG_URL
+const dbName = process.env.DB_NAME
 
-MongoClient.connect(url, {
-  useNewUrlParser: true
-}, (err, client) => {
-  if (err) return console.log(err)
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}
 
-  db = client.db(dbName)
-  console.log(`Connected MongoDB: ${url}`)
-  console.log(`Database: ${dbName}`)
-})
-
-app.use(express.static('public'));
-app.set('view engine', 'ejs');
+app.use(express.static('public'))
+app.set('view engine', 'ejs')
 
 app.get('/', function(req, res) {
-  res.render('index', {});
-});
+  res.render('index', {})
+})
 
 
 io.on('connection', socket => {
@@ -55,43 +52,39 @@ io.on('connection', socket => {
     const addquote = "/addquote" || ".addquote"
     const quote = "/quote" || ".quote"
     if (message.includes(addquote)) {
-      console.log("addQuote")
-      addQuote(db, message)
-    }
-    else if (message.includes(quote)) {
-      console.log("getQuote")
-      getQuotes(db)
-    }
-     else {
-
-    }
+      addQuote(message)
+    } else if (message.includes(quote)) {
+      getQuote()
+    } else {}
   }
 
-  function getQuotes(db) {
-    const collection = db.collection('quotes')
-    const oneQuote = db.collection('quotes').aggregate([{$sample:{size:1}}])
-
-    oneQuote.toArray(function(err, docs) {
-      const oneQuote = docs[0].name
-      console.log(oneQuote)
-      socket.emit("chat_quote", oneQuote)
-    })
+  async function addQuote(message) {
+    const cleanQuote = message.substring(10).trim()
+    const quote = {
+      "quote": cleanQuote
+    }
+    const client = await MongoClient.connect(url, options)
+    const db = client.db(dbName)
+    console.log("Connected correctly to server")
+    const item = await db.collection('chat_quote_list').insertOne(quote)
+    client.close()
+    io.emit("chat_quote", `Added "${cleanQuote}". I'm an amazing bot, right?`)
   }
 
 
-    function addQuote(db, message) {
-      const quote = message.substring(9)
-      const cleanQuote = quote.trim()
-
-
-      const collection = db.collection('quotes')
-      collection.insertOne( { name: cleanQuote} )
-      socket.emit("chat_quote", `Added "${cleanQuote}". I'm amazing, right?`)
-    }
-
+  async function getQuote() {
+    const client = await MongoClient.connect(url, options)
+    const db = client.db(dbName)
+    console.log("Connected correctly to server")
+    const quote = await db.collection('chat_quote_list').aggregate([{
+      $sample: {
+        size: 1
+      }
+    }]).toArray()
+    client.close()
+    io.emit("chat_quote", quote[0].quote)
+  }
 })
-
-
 
 http.listen(port, () => {
   console.log('App listening on: ' + port)
