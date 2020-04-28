@@ -13,6 +13,11 @@ const port = process.env.PORT
 const url = process.env.MNG_URL
 const dbName = process.env.DB_NAME
 
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}
+
 app.use(express.static('public'))
 app.set('view engine', 'ejs')
 
@@ -53,29 +58,22 @@ io.on('connection', socket => {
     } else {}
   }
 
-
   async function addQuote(message) {
     const cleanQuote = message.substring(10).trim()
     const quote = {
       "quote": cleanQuote
     }
-    const client = await MongoClient.connect(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
+    const client = await MongoClient.connect(url, options)
     const db = client.db(dbName)
     console.log("Connected correctly to server")
     const item = await db.collection('chat_quote_list').insertOne(quote)
     client.close()
-    socket.emit("chat_quote", `Added "${cleanQuote}". I'm an amazing bot, right?`)
+    io.emit("chat_quote", `Added "${cleanQuote}". I'm an amazing bot, right?`)
   }
 
 
   async function getQuote() {
-    const client = await MongoClient.connect(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
+    const client = await MongoClient.connect(url, options)
     const db = client.db(dbName)
     console.log("Connected correctly to server")
     const quote = await db.collection('chat_quote_list').aggregate([{
@@ -84,7 +82,7 @@ io.on('connection', socket => {
       }
     }]).toArray()
     client.close()
-    socket.emit("chat_quote", quote[0].quote)
+    io.emit("chat_quote", quote[0].quote)
   }
 })
 
