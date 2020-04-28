@@ -55,34 +55,42 @@ io.on('connection', socket => {
     } else {}
   }
 
-  function toevoegen(message) {
-    const quote = message.substring(10)
-    const cleanQuote = quote.trim()
-    const finalQuote = {
+
+  async function toevoegen(message) {
+    const cleanQuote = message.substring(10).trim()
+    const quote = {
       "quote": cleanQuote
     }
 
-    const client = new MongoClient(url, {
-      useUnifiedTopology: true
+    const client = await MongoClient.connect(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     })
+    const db = client.db(dbName)
+    console.log("Connected correctly to server")
+    const item = await db.collection('chat_quote_list').insertOne(quote)
+    client.close();
+    socket.emit("chat_quote", `Added "${cleanQuote}". I'm an amazing bot, right?`)
 
-    client.connect()
-      .then(function() {
-        const db = client.db(dbName)
-        const col = db.collection("chat_quote_list")
-        console.log("Connected correctly to server")
-        col.insertOne(finalQuote)
-      })
-      .then(function() {
-        socket.emit("chat_quote", `Added "${cleanQuote}". I'm amazing, right?`)
-        // client.close()
-        return
-      })
-      .catch()
   }
 
-  function pakken() {
-    console.log("get quote")
+
+  async function pakken() {
+    const client = await MongoClient.connect(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    const db = client.db(dbName)
+    console.log("Connected correctly to server")
+    const quote = await db.collection('chat_quote_list').aggregate([{
+      $sample: {
+        size: 1
+      }
+    }]).toArray()
+    console.log(quote);
+    socket.emit("chat_quote", quote[0].quote)
+
+    client.close()
   }
 
 
