@@ -19,28 +19,73 @@ Api.getNewCardDeck()
     .then(getNewCardDeck => gameMaker(getNewCardDeck));
 
 const users = [];
+const players = [];
+let currentTurn = 0;
+let turn = 0;
 let connectCounter = 0;
 
 function countInArray(array, what) {
   return array.filter(item => item == what).length;
 }
 
+function allCardsPlayed(arrLength){
+  return arrLength === 4;
+}
+
+function next_turn(socketId){
+  players[turn].myTurn = false
+  turn = ++currentTurn % players.length
+  console.log("next turn triggered", turn)
+
+
+  // console.log('oeeeeiii', !findPlayer(players, socketId))
+  // socket.emit("pass turn", )
+  players[turn].myTurn = true
+  io.to('game').emit("pass turn", findPlayer(players, socketId));
+  
+  // io.to(socketId).emit("pass turn", findPlayer(players, socketId));
+  // socket.emit("pass turn", !findPlayer(players, socketId))
+
+  
+}
+
+function findHighestCard(arr){
+  return arr.map(player => player.playedCards.map(cards => cards.value))
+}
+
+function findPlayer(array, socketId){
+  return array.find(player => player.id == socketId);
+}
+
 
 app
   .use(express.static(path.join(__dirname, "static")))
-  .get("/", router.homeRoute)
-  .get("/chat", router.chatRoute);
+  .get("/", router.homeRoute);
 
 function gameMaker(deck) {
   io.on("connection", socket => {
     //step1: first make a room
-
+    // console.log('soccket: ', socket)
     socket.on("send-nickname", nickname => {
+      // Taking turns
+
+      //Step 1: give every player object a keyvalue pair of myTurn: false x
+      //Step 2: make a function which loops through the length of players and sets one object's myTurn property to true x
+      //Step 3: send the player's myTurn property to the client 
+      //Step 4: If the client gets a myTurn property of true then add an eventlistener to player's hand
+      //Step 5: display the name of the player whos's turn it is
+      players.push({ id: socket.id, name: nickname, playedCards: [], points: 0, myTurn: false });
+
+      // console.log(users)
+
       socket.join("game", async () => {
+        
         console.log(nickname, " joined ze game");
 
         // if more than 4 players make new room
         const clients = io.sockets.adapter.rooms["game"].length;
+        
+
 
         //  console.log(clients)
 
@@ -48,21 +93,73 @@ function gameMaker(deck) {
 
         const drawnCards = await Api.drawCards(deck.deck_id, 4);
 
-        // every client draws 4 cards at start of the game
-        io.to(socket.id).emit("cards in hand", drawnCards);
+        drawnCards.cards.map(card => {
+          // console.log('vaaaluee: ', card.value.length)
 
-        //Step 1 Add a playername
-        //Step 2 Make player draw cards
-        //Step 3 Each clicked card should end up in a player's pile
-        //Step 4 To check who's the winner the values of the last play card should be compaired
+          if(card.value.length === 1 || card.value === '10') card.value = +card.value
+
+
+        })
+
+        if(players[turn].id === socket.id){
+          // console.log('oeeelaaaala: ', players[turn].id)
+          players[turn].myTurn = true
+          socket.emit('make cards clickable')
+        }
+
+        // io.to(socket.id).emit("pass turn", findPlayer(players, socket.id))
+
+        // every client draws 4 cards at start of the game
+        io.to(socket.id).emit("deal cards", drawnCards, findPlayer(players, socket.id).myTurn);
+
+
+
+
+        console.log('playaHatazz: ', players)
+
 
         socket.on("clicked card", async (playedCard, cards) => {
           //logs the card that has been played
           //in order to erase the card from the deck this card has to be found in the card deck
 
-          console.log("playedCard: ", playedCard);
+          const player = findPlayer(players, socket.id)
 
-          console.log("le deck", deck);
+          player.playedCards.push(playedCard)
+          // pass turn to next player
+          next_turn(socket.id)
+
+
+          console.log('Poooooooolooooo: ', players)
+
+          
+
+          // push every playedCard in the playedCards array
+          
+          
+          // check if everyone played 4 cards
+          if(players.every(player => allCardsPlayed(player.playedCards.length)) === true){
+            // this is what happens when everyone played his last card
+            //Math.max?
+
+
+            const values = findHighestCard(players)
+
+            const maxRow = values.map( (row) => row.pop());
+
+            //this finds the highest lat played card
+            const winningValue = Math.max.apply(null, maxRow)
+
+            //Find the player that played the winning value card
+
+            //step 1 players.find(player => player.playedCards.pop() === same as highest vlaue)
+            const winner = players.find(player => player.playedCards[3].value === winningValue)
+            
+
+            io.in("game").emit("winner", winner.name)
+
+
+          }
+
 
           const playedCardStack = await Api.cardPiles(
             deck.deck_id,
@@ -76,11 +173,11 @@ function gameMaker(deck) {
             playedCard.code
           );
 
-          console.log("playerStacks: ", playerStacks);
+          // console.log("playerStacks: ", playerStacks);
 
           const playerStacksList = await Api.pileList(deck.deck_id, nickname);
 
-          console.log("playerStacksList: ", playerStacksList);
+          // console.log("playerStacksList: ", playerStacksList);
 
           //check if card is still in game by checking whether the card is in the playedCardArray
 
@@ -88,7 +185,6 @@ function gameMaker(deck) {
 
           const burnedCards = listofPlayedCards.piles.playedCards.cards;
 
-          // console.log('Pile of played cards:', playedCardStack)
 
           if (Data.hasDuplicates(burnedCards)) {
             console.log("Duplicate cards found");
@@ -100,11 +196,10 @@ function gameMaker(deck) {
             card => card.code == playedCard.code
           );
 
-          console.log("burning card: ", toBeRemovedFromHand);
 
           cards.cards.splice(toBeRemovedFromHand, 1);
 
-          console.log("PlayedCards ", burnedCards);
+          // console.log("PlayedCards ", burnedCards);
 
           let drawnCard = await Api.drawCards(deck.deck_id, 1);
 
@@ -133,22 +228,22 @@ function gameMaker(deck) {
     const user = () => users.find(user => user.id == socket.id);
 
 
-    socket.on("send-nickname", async nickname => {
-      users.push({ id: socket.id, name: nickname, answers: [] });
+    // socket.on("send-nickname", async nickname => {
+    //   users.push({ id: socket.id, name: nickname, answers: [] });
 
-      socket.broadcast.emit(
-        "user connected",
-        `${user().name} entered the room`
-      );
-      connectCounter++;
+    //   socket.broadcast.emit(
+    //     "user connected",
+    //     `${user().name} entered the room`
+    //   );
+    //   connectCounter++;
 
-      if (connectCounter === 2) {
-        users.forEach(async user => {
-          // const deck = await drawCards()
-          // socket.broadcast.to(user.id).emit('challenge', await drawCards())
-        });
-      }
-    });
+    //   if (connectCounter === 2) {
+    //     users.forEach(async user => {
+    //       // const deck = await drawCards()
+    //       // socket.broadcast.to(user.id).emit('challenge', await drawCards())
+    //     });
+    //   }
+    // });
 
     socket.on("disconnect", () => {
       if (user() !== undefined) {
@@ -163,7 +258,7 @@ function gameMaker(deck) {
     socket.on("chat message", msg => {
       if (user().id == socket.id) {
         user().answers.push(msg);
-        let keepCount = countInArray(user().answers, randomWord.word);
+        // let keepCount = countInArray(user().answers, randomWord.word);
         console.log("keepCount:", keepCount);
         if (keepCount === randomWord.size)
           io.sockets.emit("winner", `${user().name} won the game!`);

@@ -22,39 +22,42 @@ loginForm.addEventListener('submit', (event) => {
     
 })
 
-chatForm.addEventListener('submit', (event) => {
-    event.preventDefault()
+// chatForm.addEventListener('submit', (event) => {
+//     event.preventDefault()
 
-    if(message.value != ''){
-    appendMessage(`You: ${message.value}`, 'yourMessage')
-    socket.emit('chat message', message.value)
-    message.value = ''
-    }
+//     if(message.value != ''){
+//     appendMessage(`You: ${message.value}`, 'yourMessage')
+//     socket.emit('chat message', message.value)
+//     message.value = ''
+//     }
     
-})
+// })
 
 
-socket.on('chat message', (msg) => {
-    appendMessage(msg, 'incomingMessage')
-})
+// socket.on('chat message', (msg) => {
+//     appendMessage(msg, 'incomingMessage')
+// })
 
-socket.on('user connected', (nickname) => {
-    appendMessage(nickname, 'serverNotification')
-})
+// socket.on('user connected', (nickname) => {
+//     appendMessage(nickname, 'serverNotification')
+// })
 
-socket.on('server message', (msg) => {
-    appendMessage(msg, 'serverMessage')
-})
+// socket.on('server message', (msg) => {
+//     appendMessage(msg, 'serverMessage')
+// })
 
-socket.on('challenge', (word) => {
-    console.log(word)
-    appendMessage(word, 'serverMessage')
-})  
+// socket.on('challenge', (word) => {
+//     console.log(word)
+//     appendMessage(word, 'serverMessage')
+// })  
 
 
 
-socket.on('cards in hand', (cards) => {
+socket.on('deal cards', (cards, turn) => {
+    // socket.on('pass turn', (player) => console.log('rukkeee:', player))
     console.log('caards: ', cards)
+    console.log('my turn: ', turn)
+    // console.log('playa: ', playa)
 
     cards.cards.forEach(card => {
         
@@ -62,70 +65,41 @@ socket.on('cards in hand', (cards) => {
         
     });
 
+
+
+    // event listener in aparte functieeeeee!!!!
+
 const cardsInHand = document.querySelectorAll('.card')
 
+if(turn === true){
 //when card is clicked a broadcast to everyplayer needs to be sent
 cardsInHand.forEach(card => {
+    
     card.addEventListener('click', (event) => {
-        // const clickedCard = event.target.src
 
-        // let findCard = cards.cards.find(card => card.image === clickedCard)
-        
-        // socket.emit('clicked card', findCard, cards)
-        // // console.log('maaaa', console.log(indexOf(findCard)))
-        // // gameField.appendChild(event.target)
-        // // console.log(findCard)
-
-        // // clickedCard.remove()
-
-        // event.target.remove()
-        console.log('haahha')
         findCard(event, cards)
 
     })
-})
+})}
 
 })
 
 socket.on('clicked card', (card, cards) => {
     console.log('clicked card: ', card)
     //Now append the card to the playfield
+    
 
     appendCard(gameField, card.image, 'playedCard')
 
-    console.log(cards)
 })
 
-// socket.on('drawn card', (card, cards) => {
-//     console.log('drawn card: ', card)
-
-//     appendCard(cardsSection, card.image, 'card')
-
-//     const cardsInHand = document.querySelectorAll('.card')
-
-//     const newCard = cardsInHand[3]
-//     console.log('new: ', newCard)
-
-//     newCard.addEventListener('click', (event) => {
-//         // console.log('klikkie')
-//         // console.log(cards)
-
-//         findCard(event, cards)
-
-        
-//     })
-
-// })
-
-// socket.on('show played card', (card) => {
-//     console.log('kaart: ', card)
-// })
-
-// console.log(cardsSection.children)
 
 
 socket.on('winner', (winner) => {
-    appendMessage(winner, 'winnerMessage')
+
+    console.log('the winner is: ', winner)
+
+    // appendMessage(winner, 'winnerMessage')
 })
 
 function appendMessage(message, classToBeAdded){
@@ -168,7 +142,10 @@ function findCard(ev, cards){
 
 }
 
+socket.on('pass turn', (player) => console.log('hate: ', player))
+
 function findCardInArray(array, cardToBeFound){
+    
     return foundCard = array.cards.find(card => card.image === cardToBeFound)
 
 }
