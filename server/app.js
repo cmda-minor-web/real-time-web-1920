@@ -32,19 +32,18 @@ function allCardsPlayed(arrLength){
   return arrLength === 4;
 }
 
-function next_turn(socketId){
-  players[turn].myTurn = false
+function next_turn(socketId, cards){
+  // players[turn].myTurn = false
+  console.log('sooookcccerrrttty iiidd: ', socketId)
   turn = ++currentTurn % players.length
-  console.log("next turn triggered", turn)
+  // client.emit('your turn', "it's your turn sonny")
+  // io.to(socketId).emit('your turn', "it's your turn sonny")
 
-
-  // console.log('oeeeeiii', !findPlayer(players, socketId))
-  // socket.emit("pass turn", )
-  players[turn].myTurn = true
-  io.to('game').emit("pass turn", findPlayer(players, socketId));
+  // emit only to next player
   
-  // io.to(socketId).emit("pass turn", findPlayer(players, socketId));
-  // socket.emit("pass turn", !findPlayer(players, socketId))
+  console.log("next turn triggered", 'player: ', players[turn] ,  'turn: ',turn)
+
+  io.to(players[turn].id).emit('your turn', "it's your turn sonny", cards)
 
   
 }
@@ -101,18 +100,24 @@ function gameMaker(deck) {
 
         })
 
-        if(players[turn].id === socket.id){
-          // console.log('oeeelaaaala: ', players[turn].id)
-          players[turn].myTurn = true
-          socket.emit('make cards clickable')
-        }
+      //   socket.on('pass turn', () => {
+      //   if(players[turn].id === socket.id){
+      //     // console.log('oeeelaaaala: ', players[turn].id)
+      //     // players[turn].myTurn = true
+      //     // socket.emit('make cards clickable')
+      //     next_turn()
+      //   }
+      // })
+    
 
         // io.to(socket.id).emit("pass turn", findPlayer(players, socket.id))
 
         // every client draws 4 cards at start of the game
         io.to(socket.id).emit("deal cards", drawnCards, findPlayer(players, socket.id).myTurn);
-
-
+        
+        
+        io.to(players[0].id).emit('your turn', "it's your turn sonny", drawnCards)
+        
 
 
         console.log('playaHatazz: ', players)
@@ -122,11 +127,22 @@ function gameMaker(deck) {
           //logs the card that has been played
           //in order to erase the card from the deck this card has to be found in the card deck
 
+
+          console.log('playedCard: ', playedCard)
+
           const player = findPlayer(players, socket.id)
 
           player.playedCards.push(playedCard)
           // pass turn to next player
-          next_turn(socket.id)
+          // next_turn(socket, socket.id)
+
+          if(players[turn].id === socket.id){
+            // console.log('oeeelaaaala: ', players[turn].id)
+            // players[turn].myTurn = true
+            // socket.emit('make cards clickable')
+            next_turn(socket.id, cards)
+          }
+          
 
 
           console.log('Poooooooolooooo: ', players)

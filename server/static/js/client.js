@@ -52,6 +52,38 @@ loginForm.addEventListener('submit', (event) => {
 // })  
 
 
+socket.on('your turn', (msg, cards) => {
+    console.log('the message: ', msg)
+
+    console.log('kaarta', cards)
+
+    // const _listener = function(){
+
+    //     findCard(this, cards)
+    // }
+    
+    //event listener should be place here
+
+    const cardsInHand = document.querySelectorAll('.card')
+
+    //when card is clicked a broadcast to everyplayer needs to be sent
+    // cardsInHand.forEach(card => card.addEventListener("mousedown", _listener, true))
+
+    // cardsInHand.forEach(card => card.removeEventListener("mouseup", _listener, true))
+
+    const onClick = function() {
+        findCard(this, cards)
+        cardsInHand.forEach(card => {
+          card.removeEventListener('click', onClick);
+        });
+      };
+      
+      cardsInHand.forEach(card => {
+        card.addEventListener('click', onClick);
+      });
+
+})
+
 
 socket.on('deal cards', (cards, turn) => {
     // socket.on('pass turn', (player) => console.log('rukkeee:', player))
@@ -67,20 +99,20 @@ socket.on('deal cards', (cards, turn) => {
 
 
 
-    // event listener in aparte functieeeeee!!!!
+    // event listener in aparte
 
-const cardsInHand = document.querySelectorAll('.card')
+// const cardsInHand = document.querySelectorAll('.card')
 
-if(turn === true){
-//when card is clicked a broadcast to everyplayer needs to be sent
-cardsInHand.forEach(card => {
+// //when card is clicked a broadcast to everyplayer needs to be sent
+// cardsInHand.forEach(card => {
     
-    card.addEventListener('click', (event) => {
+//     card.addEventListener('click', (event) => {
 
-        findCard(event, cards)
+//         findCard(event, cards)
 
-    })
-})}
+//     })
+// })
+
 
 })
 
@@ -124,12 +156,16 @@ function appendCard(section, source, classToBeAdded){
 function removeCard(){}
 
 function findCard(ev, cards){
+    
+    
 
-    const clickedCard = ev.target.src
+    const clickedCard = ev.src
 
+
+    console.log('from find card: ', findCardInArray(cards, clickedCard))
     // let findCard = cards.cards.find(card => card.image === clickedCard)
 
-    
+    socket.emit('pass turn')
     
     socket.emit('clicked card', findCardInArray(cards, clickedCard), cards)
     // console.log('maaaa', console.log(indexOf(findCard)))
@@ -138,11 +174,9 @@ function findCard(ev, cards){
 
     // clickedCard.remove()
 
-    event.target.remove()
+    ev.remove()
 
 }
-
-socket.on('pass turn', (player) => console.log('hate: ', player))
 
 function findCardInArray(array, cardToBeFound){
     
