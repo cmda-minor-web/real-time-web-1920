@@ -42,7 +42,7 @@ function next_turn(socket, cards){
   
   console.log("next turn triggered: ",turn)
 
-  socket.to(players[turn].id).emit('your turn', "UPTOEJDDE", cards)
+  socket.to(players[turn].id).emit('your turn', `it's your turn ${players[turn].name}`, cards)
 
   
 }
@@ -78,7 +78,7 @@ function gameMaker(deck) {
 
       socket.join("game", async () => {
         
-        console.log(nickname, " joined ze game");
+        // console.log(nickname, " joined ze game");
 
         // if more than 4 players make new room
         const clients = io.sockets.adapter.rooms["game"].length;
@@ -106,8 +106,8 @@ function gameMaker(deck) {
         
         
         if(players[turn].id === socket.id){
-
-        socket.emit('your turn', "it's your turn sonny")
+        // bron: https://stackoverflow.com/questions/44661841/why-is-my-socket-io-event-firing-multiple-times
+        socket.emit('your turn', "it's your turn")
 
         }
         // socket.to(players[0].id).emit('start game', "you can start")
@@ -140,11 +140,7 @@ function gameMaker(deck) {
           }
 
 
-          
-
-          
-
-
+      
           console.log('Poooooooolooooo: ', players)
 
           

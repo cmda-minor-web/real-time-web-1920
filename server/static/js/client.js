@@ -10,6 +10,8 @@ const nickname = document.getElementById('nickname')
 const messageList = document.getElementById('messages')
 const cardsSection = document.querySelector('.cards')
 const gameField = document.querySelector('.gameField')
+const turn = document.querySelector('.turn')
+let noti;
 
 let myCards;
 
@@ -62,6 +64,10 @@ socket.on('start game', (mdg, cards) => {
 
 socket.on('your turn', (msg) => {
     console.log('the message: ', msg)
+    
+    noti = msg
+
+    turn.textContent = noti
 
     // console.log('kaarta', myCards)
 
