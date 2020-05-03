@@ -11,6 +11,8 @@ const messageList = document.getElementById('messages')
 const cardsSection = document.querySelector('.cards')
 const gameField = document.querySelector('.gameField')
 
+let myCards;
+
 // appendMessage('You joined')
 
 loginForm.addEventListener('submit', (event) => {
@@ -52,15 +54,17 @@ loginForm.addEventListener('submit', (event) => {
 // })  
 
 
-socket.on('your turn', (msg, cards) => {
+socket.on('start game', (mdg, cards) => {
+    console.log(mdg)
+    console.log(myCards)
+    // socket.emit('pass turn')
+})
+
+socket.on('your turn', (msg) => {
     console.log('the message: ', msg)
 
-    console.log('kaarta', cards)
+    // console.log('kaarta', myCards)
 
-    // const _listener = function(){
-
-    //     findCard(this, cards)
-    // }
     
     //event listener should be place here
 
@@ -72,7 +76,8 @@ socket.on('your turn', (msg, cards) => {
     // cardsInHand.forEach(card => card.removeEventListener("mouseup", _listener, true))
 
     const onClick = function() {
-        findCard(this, cards)
+        findCard(this, myCards)
+        // console.log(this)
         cardsInHand.forEach(card => {
           card.removeEventListener('click', onClick);
         });
@@ -87,7 +92,11 @@ socket.on('your turn', (msg, cards) => {
 
 socket.on('deal cards', (cards, turn) => {
     // socket.on('pass turn', (player) => console.log('rukkeee:', player))
+
+    
     console.log('caards: ', cards)
+    myCards = cards
+    
     console.log('my turn: ', turn)
     // console.log('playa: ', playa)
 
@@ -157,17 +166,23 @@ function removeCard(){}
 
 function findCard(ev, cards){
     
-    
+    // console.log(ev)
+    console.log('cards: ', cards)
 
     const clickedCard = ev.src
 
+    const foundCard = findCardInArray(cards, clickedCard)
 
-    console.log('from find card: ', findCardInArray(cards, clickedCard))
-    // let findCard = cards.cards.find(card => card.image === clickedCard)
-
-    socket.emit('pass turn')
     
-    socket.emit('clicked card', findCardInArray(cards, clickedCard), cards)
+    // let findCard = cards.cards.find(card => card.image === clickedCard)
+    // console.log('foundCard : ', foundCard)
+    socket.emit('pass turn')
+
+
+    socket.emit('clicked card', foundCard, cards)
+  
+    
+    
     // console.log('maaaa', console.log(indexOf(findCard)))
     // gameField.appendChild(event.target)
     // console.log(findCard)

@@ -32,18 +32,17 @@ function allCardsPlayed(arrLength){
   return arrLength === 4;
 }
 
-function next_turn(socketId, cards){
-  // players[turn].myTurn = false
-  console.log('sooookcccerrrttty iiidd: ', socketId)
+function next_turn(socket, cards){
+
   turn = ++currentTurn % players.length
   // client.emit('your turn', "it's your turn sonny")
   // io.to(socketId).emit('your turn', "it's your turn sonny")
 
   // emit only to next player
   
-  console.log("next turn triggered", 'player: ', players[turn] ,  'turn: ',turn)
+  console.log("next turn triggered: ",turn)
 
-  io.to(players[turn].id).emit('your turn', "it's your turn sonny", cards)
+  socket.to(players[turn].id).emit('your turn', "UPTOEJDDE", cards)
 
   
 }
@@ -73,7 +72,7 @@ function gameMaker(deck) {
       //Step 3: send the player's myTurn property to the client 
       //Step 4: If the client gets a myTurn property of true then add an eventlistener to player's hand
       //Step 5: display the name of the player whos's turn it is
-      players.push({ id: socket.id, name: nickname, playedCards: [], points: 0, myTurn: false });
+      players.push({ id: socket.id, name: nickname, playedCards: [], points: 0});
 
       // console.log(users)
 
@@ -100,28 +99,25 @@ function gameMaker(deck) {
 
         })
 
-      //   socket.on('pass turn', () => {
-      //   if(players[turn].id === socket.id){
-      //     // console.log('oeeelaaaala: ', players[turn].id)
-      //     // players[turn].myTurn = true
-      //     // socket.emit('make cards clickable')
-      //     next_turn()
-      //   }
-      // })
-    
-
-        // io.to(socket.id).emit("pass turn", findPlayer(players, socket.id))
+        // findPlayer(players, socket.id).cardsInHand.push(drawnCards)
 
         // every client draws 4 cards at start of the game
-        io.to(socket.id).emit("deal cards", drawnCards, findPlayer(players, socket.id).myTurn);
+        io.to(socket.id).emit("deal cards", drawnCards);
         
         
-        io.to(players[0].id).emit('your turn', "it's your turn sonny", drawnCards)
-        
+        if(players[turn].id === socket.id){
 
+        socket.emit('your turn', "it's your turn sonny")
 
+        }
+        // socket.to(players[0].id).emit('start game', "you can start")
+        // socket.to(players[0].id).emit('start game', "you can start")
+        
+        
+        
         console.log('playaHatazz: ', players)
 
+        // socket.on('pass turn', (msg) => console.log(msg))
 
         socket.on("clicked card", async (playedCard, cards) => {
           //logs the card that has been played
@@ -140,8 +136,12 @@ function gameMaker(deck) {
             // console.log('oeeelaaaala: ', players[turn].id)
             // players[turn].myTurn = true
             // socket.emit('make cards clickable')
-            next_turn(socket.id, cards)
+            next_turn(socket, cards)
           }
+
+
+          
+
           
 
 
@@ -226,11 +226,7 @@ function gameMaker(deck) {
           // update remaining cards
           cards.remaining = drawnCard.remaining;
 
-          // cards.cards.push(drawnCard.cards[0])
-
-          // console.log('with drawn card: ', cards)
-
-          io.in("game").emit("clicked card", playedCard, cards);
+          io.in("game").emit("clicked card", playedCard);
           // io.to(socket.id).emit('drawn card', drawnCard.cards[0], cards);
         });
 
@@ -239,51 +235,6 @@ function gameMaker(deck) {
       });
     });
 
-    //step 2: whem players are in the room get a new card deck
-
-    const user = () => users.find(user => user.id == socket.id);
-
-
-    // socket.on("send-nickname", async nickname => {
-    //   users.push({ id: socket.id, name: nickname, answers: [] });
-
-    //   socket.broadcast.emit(
-    //     "user connected",
-    //     `${user().name} entered the room`
-    //   );
-    //   connectCounter++;
-
-    //   if (connectCounter === 2) {
-    //     users.forEach(async user => {
-    //       // const deck = await drawCards()
-    //       // socket.broadcast.to(user.id).emit('challenge', await drawCards())
-    //     });
-    //   }
-    // });
-
-    socket.on("disconnect", () => {
-      if (user() !== undefined) {
-        socket.broadcast.emit(
-          "server message",
-          `${user().name} has left the chat`
-        );
-        connectCounter--;
-      }
-    });
-
-    socket.on("chat message", msg => {
-      if (user().id == socket.id) {
-        user().answers.push(msg);
-        // let keepCount = countInArray(user().answers, randomWord.word);
-        console.log("keepCount:", keepCount);
-        if (keepCount === randomWord.size)
-          io.sockets.emit("winner", `${user().name} won the game!`);
-      }
-
-      console.log("users saving answers: ", users);
-
-      socket.broadcast.emit("chat message", `${user().name}: ${msg}`);
-    });
   });
 }
 
