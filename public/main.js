@@ -1,0 +1,13 @@
+const tweets = document.querySelector(".tweets")
+const socket = io()
+
+socket.on("new_tweet", function(data) {
+  addTweet(data)
+})
+
+function addTweet(tweet) {
+  const li = document.createElement("li")
+  li.innerHTML = tweet
+  tweets.appendChild(li)
+  window.scrollTo(0, document.body.scrollHeight)
+}
