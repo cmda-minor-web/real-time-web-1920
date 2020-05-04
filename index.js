@@ -48,24 +48,56 @@ io.on('connection', socket => {
   socket.on('new_tweet', data => {
     socket.broadcast.emit('new_tweet', data)
   })
-
-
 })
 
-
-client.stream('statuses/filter', {
-  track: 'javascript'
-}, function(stream) {
-  stream.on('data', function(tweet) {
-    console.log(tweet.text)
-    const data = tweet.text
-    io.emit("new_tweet", data)
-  })
-
-  stream.on('error', function(error) {
-    console.log(error)
-  })
+//
+var options2 = {
+  screen_name: 'jeffreestar',
+  count: 5
+};
+//
+client.get('statuses/user_timeline', options2, function(err, data) {
+  const tweets = data.map(tweet => console.log(tweet.text))
+  io.emit("new_tweet", tweets)
 })
+//
+// var options2 = {
+//   track: 'javascript'
+//   // count: 3
+// };
+
+//
+// client.stream('statuses/filter', options2, function(stream) {
+//   stream.on('data', function(data) {
+//     console.log(data)
+//
+//     // console.log(tweet.text)
+//     // const data = tweet.text
+//     // io.emit("new_tweet", data)
+//   })
+//
+//   stream.on('error', function(error) {
+//     console.log(error)
+//   })
+// })
+
+//
+// client.stream('statuses/user_timeline', {
+//   screen_name: 'jeffreestar',
+//   count: 5
+// }, function(stream) {
+//   stream.on('data', function(tweet) {
+//
+//     console.log(tweet)
+//     console.log(tweet.text)
+//     const data = tweet.text
+//     io.emit("new_tweet", data)
+//   })
+//
+//   stream.on('error', function(error) {
+//     console.log(error)
+//   })
+// })
 
 // const endpoint = "https://api.twitter.com/1.1/users/show.json?screen_name=jeffreestar"
 
