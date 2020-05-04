@@ -5,7 +5,13 @@ const shortid = require('shortid');
 const session = require('express-session');
 const redis = require('redis');
 const redisStore = require('connect-redis')(session);
-const redisClient = redis.createClient();
+let redisClient
+    if (process.env.REDISCLOUD_URL) {
+        redisClient = redis.createClient(process.env.REDISCLOUD_URL, {no_ready_check: true});
+    }
+    else {
+        redisClient = redis.createClient();
+    }
 require("express-ws")(app);
 const bodyParser = require("body-parser");
 dotenv.config();
