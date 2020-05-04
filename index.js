@@ -40,8 +40,8 @@ io.on('connection', socket => {
     checkMessage(message)
   })
 
-  socket.on('chat_quote', function(docs) {
-    socket.broadcast.emit('chat_quote', docs)
+  socket.on('chat_quote', function(quote) {
+    socket.broadcast.emit('chat_quote', quote)
   })
 
   socket.on('disconnect', data => {
