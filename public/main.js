@@ -7,7 +7,7 @@ const socket = io()
 form.addEventListener("submit", function(event) {
   event.preventDefault()
 
-  addMessage(this.username + ": " + input.value)
+  addMessage(username + ": " + input.value)
 
   socket.emit("chat_message", {
     // username: this.username,
