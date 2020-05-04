@@ -1,7 +1,7 @@
 {
   "name": "RTW-chat_1",
   "version": "0.0.1",
-  "description": "Chatroom with chatbot that collects quotes added by users",
+  "description": "Dashboard showing rivaling famous Twitter users in follower-battle",
   "dependencies": {
     "dotenv": "^8.2.0",
     "ejs": "^3.1.2",
@@ -9,7 +9,9 @@
     "heroku": "^7.39.5",
     "mongodb": "^3.5.6",
     "mongoose": "^5.9.10",
+    "node-fetch": "^2.6.0",
     "socket.io": "^2.3.0",
+    "twitter": "^1.7.1",
     "validator": "^13.0.0"
   },
   "devDependencies": {
