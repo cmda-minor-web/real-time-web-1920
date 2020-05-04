@@ -104,3 +104,18 @@ h4 {
 html {
   background-color: var(--extra_light_grey);
 }
+
+
+.tweets {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 3rem;
+}
+
+.tweets li {
+    padding: 0.5rem;
+}
+
+.tweets li:nth-child(odd) {
+  background: #E6E6FA;
+}
