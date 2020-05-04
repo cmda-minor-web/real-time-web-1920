@@ -1,3 +1,109 @@
+@import 'reset.css';
+@import 'fonts.css';
+
+
+/* BASE */
+:root {
+  --white: #FFFFFF;
+  --blue: #1F2D3D;
+  --black: #14171A;
+
+  --dark_grey: #657786;
+  --light_grey: #AAB8C2;
+  --extra_light_grey: #E1E8ED;
+  --extra_extra_light_grey: #F5F8FA;
+
+  --photo_layer: 15%;
+
+
+  --h2BlueLight: #8492A6;
+  --textBlue: #1F2D3D;
+  --table1: #EFF2F7;
+  --table2: #FFFFFF;
+  --table3: #F9FAFC;
+
+
+  --fonth1: 32.5px;
+  --fonth2: 24px;
+  --fonth3: 21px;
+  --fonth4: 18px;
+
+  --fontWeight_1:  100;
+  --fontWeight_2:  200;
+  --fontWeight_3:  300;
+  --fontWeight_4:  400;
+  --fontWeight_5:  500;
+  --fontWeight_6:  600;
+  --fontWeight_7:  700;
+  --fontWeight_8:  800;
+  --fontWeight_9:  900;
+
+  --lineHeight_31: 31px;
+  --lineHeight_27: 27px;
+  --lineHeight_8: 8px;
+  --spacing-15: 15px;
+  --font-logo:  "Helvetica Neue Bold", Helvetica, sans-serif;
+  --font-usernames: "Helvetica Neue Regular", Helvetica, sans-serif;
+  --font-body: "Roboto", Tahoma, Helvetica, Arial, sans-serif;
+}
+
+
+.header {
+  background-color: #1E2D3E;
+  width: 540px;
+  height: 65px;
+}
+
+h1 {
+  font-size: var(--fonth2);
+  font-family: var(--font-body);
+  font-weight: 700;
+  line-height: 31px;
+  text-align: left;
+  width: 230px;
+  color: #1F2D3D;
+
+}
+
+.header h1 {
+  font-family:  var(--font-logo);
+  font-size:  var(--fonth1);
+  color: var(--white);
+  text-align: center;
+  width: 540px;
+  padding-top: 15px;
+  /* line-height: 8px; */
+}
+
+
+h2 {
+color: #8492A6;
+font-family: var(--font-body);
+font-size: 21px;
+font-weight: 400;
+line-height: 27px;
+width: 225.5px;
+text-align: left;
+}
+
+h3 {
+  font-size: var(--fonth3);
+}
+
+p {
+  color: #1F2D3D;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 31px;
+  width: 173.59px;
+  text-align: left;
+}
+
+h4 {
+  font-size: var(--fonth4)
+}
+
+
 body {
     margin: 0;
     font-family: sans-serif;
