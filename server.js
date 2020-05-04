@@ -5,16 +5,16 @@ const shortid = require('shortid');
 const session = require('express-session');
 const redis = require('redis');
 const redisStore = require('connect-redis')(session);
-let redisClient
-    if (process.env.REDISCLOUD_URL) {
-        redisClient = redis.createClient(process.env.REDISCLOUD_URL, {no_ready_check: true});
-    }
-    else {
-        redisClient = redis.createClient();
-    }
-require("express-ws")(app);
 const bodyParser = require("body-parser");
+require("express-ws")(app);
 dotenv.config();
+
+let redisClient;
+if (process.env.REDISCLOUD_URL) {
+    redisClient = redis.createClient(process.env.REDISCLOUD_URL, {no_ready_check: true});
+} else {
+    redisClient = redis.createClient();
+}
 
 const port = process.env.PORT || 3000;
 let userCounter = -1;
@@ -40,13 +40,13 @@ if (app.get('env') === 'production') {
 app.use(session(sess))
 
 mongodClient.connect().then(err => {
+    const rooms = {};
     const users = mongodClient.db("rtw1920").collection("users");
     let wsClients = [];
+
     app.set("view engine", "pug");
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
-
-
     app.use(express.static("static"));
 
     app.ws("/join/:id", (ws, req) => {
@@ -54,21 +54,26 @@ mongodClient.connect().then(err => {
             const message = JSON.parse(msg);
             if (message.type === "MOVEMENT") {
                 ws.position = message.player.position;
-                wsClients.forEach((wsClient) => {
+                rooms[req.params.roomId].forEach((wsClient) => {
                     if (wsClient.uuid !== ws.uuid) {
                         message.user = ws.uuid;
                         wsClient.send(JSON.stringify(message));
                     }
                 });
             } else if (message.type === "LOGIN") {
+                if (!rooms[req.params.id]){
+                    rooms[req.params.id] = [];
+                }
                 ws.uuid = userCounter;
+                ws.roomId = req.params.id
+                req.session.gameId = req.params.id
                 message.user = ws.uuid;
                 ws.position = message.player.position;
-                wsClients.push(ws);
-                wsClients.forEach((wsClient) => {
+                rooms[req.params.id].push(ws);
+                rooms[req.params.id].forEach((wsClient) => {
                     if (wsClient.uuid === ws.uuid) {
                         message.own = true;
-                        message.players = wsClients.map(wsClient => {
+                        message.players = rooms[req.params.id].map(wsClient => {
                             if (wsClient.uuid !== ws.uuid) {
                                 return {user: wsClient.uuid, position: wsClient.position}
                             } else {
@@ -90,7 +95,7 @@ mongodClient.connect().then(err => {
 
         ws.on("close", () => {
             console.log("WebSocket was closed");
-            wsClients = wsClients.filter((wsClient) => {
+            rooms[req.params.id] = rooms[req.params.id].filter((wsClient) => {
                 if (wsClient.uuid !== ws.uuid) {
                     wsClient.send(
                         JSON.stringify({
