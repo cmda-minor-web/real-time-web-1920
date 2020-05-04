@@ -42,6 +42,10 @@ app.get('/', function(req, res) {
   // })
 })
 
+const options2 = {
+  screen_name: 'jeffreestar',
+  count: 5
+}
 
 io.on('connection', socket => {
 
@@ -50,15 +54,23 @@ io.on('connection', socket => {
   })
 })
 
-//
-var options2 = {
-  screen_name: 'jeffreestar',
-  count: 5
-};
-//
+
+
 client.get('statuses/user_timeline', options2, function(err, data) {
-  const tweets = data.map(tweet => console.log(tweet.text))
-  io.emit("new_tweet", tweets)
+  const tweets = data.map(function(item) {
+    const tweet = item.text
+    return tweet
+  })
+  const tweet1 = tweets[0]
+  const tweet2 = tweets[1]
+  const tweet3 = tweets[2]
+
+  io.emit("new_tweet", tweet1)
+  io.emit("new_tweet", tweet2)
+  io.emit("new_tweet", tweet3)
+
+  // io.emit("new_tweet", tweet1)
+
 })
 //
 // var options2 = {
