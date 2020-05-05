@@ -23,10 +23,7 @@ const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }
-const filterOptions = {
-  screen_name: 'jeffreestar',
-  count: 1
-}
+
 
 app.use(express.static('public'))
   .set('view engine', 'ejs')
@@ -52,6 +49,12 @@ io.on('connection', socket => {
 
 
 function getTweet(latest_tweet) {
+  let zoeken = 'jeffreestar'
+  const filterOptions = {
+    screen_name: zoeken,
+    count: 1
+  }
+
   const getData = new Promise((resolve) => {
     twitterClient.get('statuses/user_timeline', filterOptions, function(err, data) {
       const tweets = data.map((item) => {
