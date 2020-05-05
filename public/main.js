@@ -6,8 +6,9 @@ socket.on("new_tweet", function(tweet) {
   socket.emit("refresh_tweet", tweet)
 })
 
+let zoeken = 'jeffreestar'
 
-socket.emit("start")
+socket.emit("start", zoeken)
 
 
 function addTweet(tweet) {

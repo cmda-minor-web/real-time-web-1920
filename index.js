@@ -34,8 +34,9 @@ app.use(express.static('public'))
 
 io.on('connection', socket => {
 
-  socket.on("start", () => {
-    getTweet()
+  socket.on("start", username => {
+    console.log(username)
+    getTweet(username)
   })
 
   socket.on('new_tweet', data => {
