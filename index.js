@@ -35,7 +35,7 @@ app.use(express.static('public'))
 io.on('connection', socket => {
 
   socket.on("start", function(username) {
-    getTweet(username, '')
+    getInfo(username, '')
   })
 
   socket.on('new_tweet', function(username, tweet) {
@@ -43,12 +43,12 @@ io.on('connection', socket => {
   })
 
   socket.on('refresh_tweet', function(username, latest_tweet) {
-    getTweet(username, latest_tweet)
+    getInfo(username, latest_tweet)
   })
 })
 
 
-function getTweet(username, latest_tweet) {
+function getInfo(username, latest_tweet) {
   const filterOptions = {
     screen_name: username,
     count: 1
@@ -62,9 +62,7 @@ function getTweet(username, latest_tweet) {
         user_screen_name: item.user.screen_name,
         followers: item.user.followers_count
       }))
-      // console.log(tweets)
       const tweet = tweets[0]
-      // console.log(tweet)
       resolve(tweet)
     })
   })
@@ -72,22 +70,30 @@ function getTweet(username, latest_tweet) {
   getData
     .then(tweet => {
       const tweetText = tweet.text
-      if (tweetText == latest_tweet) {
-        const sameTweet = tweet
-        console.log('same old')
-        refreshTweet(username, tweetText)
-      } else {
-        console.log('sunshine and rainbows: new tweet!')
-        io.emit("new_tweet", username, tweetText)
-      }
+      checkText(username, tweetText, latest_tweet)
     })
     .catch(err => {
       console.log(err)
     })
 }
 
+function checkText(username, tweetText, latest_tweet) {
+  if (tweetText == latest_tweet) {
+    console.log('same old')
+    refreshTweet(username, tweetText)
+  } else {
+    console.log('sunshine and rainbows: new tweet!')
+    io.emit("new_tweet", username, tweetText)
+  }
+}
+
+
+// function checkFollowers() {
+//
+// }
+
 function refreshTweet(username, latest_tweet) {
-  getTweet(username, latest_tweet)
+  getInfo(username, latest_tweet)
 }
 
 http.listen(port, () => {
