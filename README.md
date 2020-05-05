@@ -141,7 +141,10 @@ _How does flowed interaction through the application? (interaction diagram)_
 ### 🐒 API
 _What external data source is featured in your project and what are its properties?_
 
-Somethingsomething
+Twitter API.
+ChartsJS.
+
+Na lang zoeken toch maar overstag gegaan met het gebruik van de Twitter-library.
 
 #### Properties
 

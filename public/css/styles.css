@@ -110,6 +110,7 @@ html {
     margin: 0;
     padding: 0;
     margin-bottom: 3rem;
+    max-width: 400px;
 }
 
 .tweets li {
