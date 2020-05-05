@@ -70,10 +70,10 @@ function getTweet(username, latest_tweet) {
     .then(tweet => {
       if (tweet === latest_tweet) {
         const sameTweet = tweet
-        console.log('same old')
+        // console.log('same old')
         refreshTweet(username, tweet)
       } else {
-        console.log('sunshine and rainbows: new tweet!')
+        // console.log('sunshine and rainbows: new tweet!')
         io.emit("new_tweet", username, tweet)
       }
     })
