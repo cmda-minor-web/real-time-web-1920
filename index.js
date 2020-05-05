@@ -50,30 +50,24 @@ const options2 = {
 io.on('connection', socket => {
 
   socket.on("start", data => {
-    console.log('twee')
-    console.log(data)
     getTweet()
   })
 
   socket.on('new_tweet', data => {
-    console.log('zes')
     socket.broadcast.emit('new_tweet', data)
     // getTweet()
   })
 
-  socket.on('refresh_tweet', data => {
-    console.log(data)
-    console.log("elf")
+  socket.on('refresh_tweet', tweet => {
+    const latest_tweet = tweet
     // io.emit("new_tweet", tweet)
-    getTweet()
+    getTweet(latest_tweet)
   })
 })
 
 
-
-function getTweet() {
-  console.log('drie')
-  const getData = new Promise(resolve => {
+function getTweet(latest_tweet) {
+  const getData = new Promise((resolve) => {
     client.get('statuses/user_timeline', options2, function(err, data) {
       const tweets = data.map(function(item) {
         // console.log(item.user.followers_count)
@@ -81,26 +75,37 @@ function getTweet() {
         return tweet
       })
       const tweet = tweets[0]
-      console.log('vier')
       resolve(tweet)
     })
   })
 
-  getData.then(tweet => {
-      console.log('vijf')
-      io.emit("new_tweet", tweet)
+  getData
+    .then(tweet => {
+      if (tweet === latest_tweet) {
+        console.log('same old')
+        refreshTweet(tweet)
+      } else {
+        console.log('sunshine and more: new tweet!')
+        io.emit("new_tweet", tweet)
+      }
     })
-    .then(() => {
-      console.log('negen')
-      refreshTweet()
+    // .then(() => {
+    //   console.log('negen')
+    //   refreshTweet()
+    // })
+
+    .catch(err => {
+      console.log(err)
     })
 }
 
-function refreshTweet() {
-  console.log('tien')
-  const data = 'yeet'
-  io.emit("refresh_tweet", data)
+function refreshTweet(latest_tweet) {
+  getTweet(latest_tweet)
+  // io.emit("refresh_tweet")
+}
 
+function yeet() {
+  console.log('esketit')
 }
 
 
