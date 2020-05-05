@@ -11,6 +11,8 @@ const messageList = document.getElementById('messages')
 const cardsSection = document.querySelector('.cards')
 const gameField = document.querySelector('.gameField')
 const turn = document.querySelector('.turn')
+const room = 'game'
+const leaveButton = document.querySelector('.leave')
 let noti;
 
 let myCards;
@@ -21,10 +23,12 @@ loginForm.addEventListener('submit', (event) => {
     event.preventDefault()
     
     socket.emit('send-nickname', nickname.value)
+    socket.emit('room', room)
     loginScreen.style.display = 'none'
     gameField.style.display = 'block'
     
 })
+
 
 // chatForm.addEventListener('submit', (event) => {
 //     event.preventDefault()
@@ -111,24 +115,6 @@ socket.on('deal cards', (cards, turn) => {
         appendCard(cardsSection, card.image, 'card')
         
     });
-
-
-
-    // event listener in aparte
-
-// const cardsInHand = document.querySelectorAll('.card')
-
-// //when card is clicked a broadcast to everyplayer needs to be sent
-// cardsInHand.forEach(card => {
-    
-//     card.addEventListener('click', (event) => {
-
-//         findCard(event, cards)
-
-//     })
-// })
-
-
 })
 
 socket.on('clicked card', (card, cards) => {
@@ -147,6 +133,15 @@ socket.on('winner', (winner) => {
     console.log('the winner is: ', winner)
 
     // appendMessage(winner, 'winnerMessage')
+})
+
+socket.on('round over', (msg) => {
+    // gameField.innerHTML = ''
+
+    gameField.innerHTML = ''
+
+    socket.emit('next round')
+    
 })
 
 function appendMessage(message, classToBeAdded){

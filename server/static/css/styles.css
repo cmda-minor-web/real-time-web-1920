@@ -146,9 +146,8 @@ button{
     left: 80px;
 }
 
-.turn{
-  position: absolute;
-  margin-top: 22rem;
+.playerInfo{
+  display: flex;
 }
 
 .main-title{
