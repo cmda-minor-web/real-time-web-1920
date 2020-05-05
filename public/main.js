@@ -3,7 +3,6 @@ const socket = io()
 const searchForm = document.querySelector(".searchForm")
 const input = document.querySelector(".input")
 
-<<<<<<< HEAD
 searchForm.addEventListener("submit", function(event) {
   event.preventDefault()
   // when searching for another username, delete the results of the previous search
@@ -18,20 +17,6 @@ searchForm.addEventListener("submit", function(event) {
   return false
 }, false)
 
-=======
-socket.on("new_tweet", function(user, tweet) {
-  console.log('main' + user)
-  console.log('main' + tweet)
-
-  addTweet(tweet)
-  socket.emit("refresh_tweet", tweet)
-})
-
-let zoeken = 'jeffreestar'
-let ding = 'hehehe'
-
-socket.emit("start", zoeken, ding)
->>>>>>> ee59f7a3c67201dce7a87bd969502ee41ac79353
 
 
 socket.on("new_tweet", function(username, tweet) {

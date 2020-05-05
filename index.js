@@ -34,7 +34,6 @@ app.use(express.static('public'))
 
 io.on('connection', socket => {
 
-<<<<<<< HEAD
   socket.on("start", function(username) {
     getTweet(username, '')
   })
@@ -45,31 +44,11 @@ io.on('connection', socket => {
 
   socket.on('refresh_tweet', function(username, latest_tweet) {
     getTweet(username, latest_tweet)
-=======
-  socket.on("start", function info(username, ding) {
-    console.log(username)
-    console.log(ding)
-    getTweet(username, '')
-  })
-
-  socket.on('new_tweet', user, tweet => {
-    console.log('inde' + user)
-    console.log('inde' + user)
-    socket.broadcast.emit('new_tweet', user, tweet)
-  })
-
-  socket.on('refresh_tweet', latest_tweet => {
-    getTweet(user, latest_tweet)
->>>>>>> ee59f7a3c67201dce7a87bd969502ee41ac79353
   })
 })
 
 
 function getTweet(username, latest_tweet) {
-<<<<<<< HEAD
-=======
-  let zoeken = username
->>>>>>> ee59f7a3c67201dce7a87bd969502ee41ac79353
   const filterOptions = {
     screen_name: username,
     count: 1
@@ -92,20 +71,10 @@ function getTweet(username, latest_tweet) {
       if (tweet === latest_tweet) {
         const sameTweet = tweet
         console.log('same old')
-<<<<<<< HEAD
         refreshTweet(username, tweet)
       } else {
         console.log('sunshine and rainbows: new tweet!')
         io.emit("new_tweet", username, tweet)
-=======
-        refreshTweet(username, sameTweet)
-      } else {
-        console.log('sunshine and rainbows: new tweet!')
-        const user = username
-        console.log(user)
-        console.log(tweet)
-        io.emit("new_tweet", user, tweet)
->>>>>>> ee59f7a3c67201dce7a87bd969502ee41ac79353
       }
     })
     .catch(err => {
@@ -114,12 +83,6 @@ function getTweet(username, latest_tweet) {
 }
 
 function refreshTweet(username, latest_tweet) {
-<<<<<<< HEAD
-=======
-  console.log('rf' + username)
-  console.log('rf' + latest_tweet)
-
->>>>>>> ee59f7a3c67201dce7a87bd969502ee41ac79353
   getTweet(username, latest_tweet)
 }
 
