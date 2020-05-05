@@ -34,25 +34,23 @@ app.use(express.static('public'))
 
 io.on('connection', socket => {
 
-  socket.on("start", username => {
-    console.log(username)
-    getTweet(username)
+  socket.on("start", function(username) {
+    getTweet(username, '')
   })
 
-  socket.on('new_tweet', data => {
-    socket.broadcast.emit('new_tweet', data)
+  socket.on('new_tweet', function(username, tweet) {
+    socket.broadcast.emit('new_tweet', username, tweet)
   })
 
-  socket.on('refresh_tweet', latest_tweet => {
-    getTweet(latest_tweet)
+  socket.on('refresh_tweet', function(username, latest_tweet) {
+    getTweet(username, latest_tweet)
   })
 })
 
 
-function getTweet(latest_tweet) {
-  let zoeken = 'jeffreestar'
+function getTweet(username, latest_tweet) {
   const filterOptions = {
-    screen_name: zoeken,
+    screen_name: username,
     count: 1
   }
 
@@ -72,10 +70,10 @@ function getTweet(latest_tweet) {
     .then(tweet => {
       if (tweet === latest_tweet) {
         console.log('same old')
-        refreshTweet(tweet)
+        refreshTweet(username, tweet)
       } else {
         console.log('sunshine and rainbows: new tweet!')
-        io.emit("new_tweet", tweet)
+        io.emit("new_tweet", username, tweet)
       }
     })
     .catch(err => {
@@ -83,8 +81,8 @@ function getTweet(latest_tweet) {
     })
 }
 
-function refreshTweet(latest_tweet) {
-  getTweet(latest_tweet)
+function refreshTweet(username, latest_tweet) {
+  getTweet(username, latest_tweet)
 }
 
 http.listen(port, () => {

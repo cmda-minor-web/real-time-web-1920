@@ -1,6 +1,11 @@
 <!doctype html>
 <%- include('./partials/head.ejs') %>
 <%- include('./partials/header.ejs') %>
+<form class="searchForm">
+  <label for="username">Search for a Twitter user: </label>
+  <input type="text" name="username" class="input" autocomplete="off" autofocus />
+  <button>Send</button>
+</form>
 
 <ul class="tweets"></ul>
 

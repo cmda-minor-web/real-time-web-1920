@@ -1,15 +1,28 @@
 const tweets = document.querySelector(".tweets")
 const socket = io()
+const searchForm = document.querySelector(".searchForm")
+const input = document.querySelector(".input")
 
-socket.on("new_tweet", function(tweet) {
+searchForm.addEventListener("submit", function(event) {
+  event.preventDefault()
+  // when searching for another username, delete the results of the previous search
+  while (tweets.firstChild) {
+    tweets.removeChild(tweets.firstChild);
+  }
+
+  const username = input.value
+  socket.emit("start", username)
+
+  input.value = ""
+  return false
+}, false)
+
+
+
+socket.on("new_tweet", function(username, tweet) {
   addTweet(tweet)
-  socket.emit("refresh_tweet", tweet)
+  socket.emit("refresh_tweet", username, tweet)
 })
-
-let zoeken = 'jeffreestar'
-
-socket.emit("start", zoeken)
-
 
 function addTweet(tweet) {
   const li = document.createElement("li")

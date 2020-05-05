@@ -105,11 +105,15 @@ html {
   background-color: var(--extra_light_grey);
 }
 
+.search {
+  margin-left: 25rem;
 
+}
 .tweets {
     margin: 0;
     padding: 0;
     margin-bottom: 3rem;
+    max-width: 400px;
 }
 
 .tweets li {
