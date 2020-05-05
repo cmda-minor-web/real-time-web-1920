@@ -5,7 +5,6 @@ const io = require('socket.io')(http)
 const {
   MongoClient
 } = require("mongodb")
-const fetch = require('node-fetch')
 const Twitter = require('twitter')
 
 
@@ -14,7 +13,7 @@ require('dotenv').config()
 const port = process.env.PORT
 const url = process.env.MNG_URL
 const dbName = process.env.DB_NAME
-const client = new Twitter({
+const twitterClient = new Twitter({
   consumer_key: process.env.TWITTER_API_KEY,
   consumer_secret: process.env.TWITTER_API_SECRET_KEY,
   access_token_key: process.env.TWITTER_ACCESS_TOKEN,
@@ -30,10 +29,10 @@ const filterOptions = {
 }
 
 app.use(express.static('public'))
-app.set('view engine', 'ejs')
-app.get('/', function(req, res) {
-  res.render('index', {})
-})
+  .set('view engine', 'ejs')
+  .get('/', function(req, res) {
+    res.render('index', {})
+  })
 
 
 io.on('connection', socket => {
@@ -54,8 +53,8 @@ io.on('connection', socket => {
 
 function getTweet(latest_tweet) {
   const getData = new Promise((resolve) => {
-    client.get('statuses/user_timeline', filterOptions, function(err, data) {
-      const tweets = data.map(function(item) {
+    twitterClient.get('statuses/user_timeline', filterOptions, function(err, data) {
+      const tweets = data.map((item) => {
         // console.log(item.user.followers_count)
         const tweet = item.text
         return tweet
