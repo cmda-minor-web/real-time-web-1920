@@ -18,9 +18,6 @@
 
   --h2BlueLight: #8492A6;
   --textBlue: #1F2D3D;
-  --table1: #EFF2F7;
-  --table2: #FFFFFF;
-  --table3: #F9FAFC;
 
 
   --fonth1: 32.5px;
@@ -102,18 +99,31 @@ h4 {
 }
 
 html {
+  background-color: var(--extra_extra_light_grey);
+}
+
+.searchForm {
+  margin-left: 25vw;
+  max-width: 50vw;
+  padding: 10px;
   background-color: var(--extra_light_grey);
+  border-radius: 10px;
 }
 
-.search {
-  margin-left: 25rem;
-
+.input {
+  padding: 10px;
+  background-color: var(--light_grey);
+  border-radius: 10px;
 }
+
 .tweets {
     margin: 0;
     padding: 0;
+    margin-left: 5vw;
     margin-bottom: 3rem;
     max-width: 400px;
+    background-color: var(--extra_light-grey)
+    padding: 2rem;
 }
 
 .tweets li {
