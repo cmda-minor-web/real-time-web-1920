@@ -56,25 +56,29 @@ function getTweet(username, latest_tweet) {
 
   const getData = new Promise((resolve) => {
     twitterClient.get('statuses/user_timeline', filterOptions, function(err, data) {
-      const tweets = data.map((item) => {
-        // console.log(item.user.followers_count)
-        const tweet = item.text
-        return tweet
-      })
+      const tweets = data.map(item => ({
+        text: item.text,
+        user_name: item.user.name,
+        user_screen_name: item.user.screen_name,
+        followers: item.user.followers_count
+      }))
+      // console.log(tweets)
       const tweet = tweets[0]
+      // console.log(tweet)
       resolve(tweet)
     })
   })
 
   getData
     .then(tweet => {
-      if (tweet === latest_tweet) {
+      const tweetText = tweet.text
+      if (tweetText == latest_tweet) {
         const sameTweet = tweet
-        // console.log('same old')
-        refreshTweet(username, tweet)
+        console.log('same old')
+        refreshTweet(username, tweetText)
       } else {
-        // console.log('sunshine and rainbows: new tweet!')
-        io.emit("new_tweet", username, tweet)
+        console.log('sunshine and rainbows: new tweet!')
+        io.emit("new_tweet", username, tweetText)
       }
     })
     .catch(err => {
