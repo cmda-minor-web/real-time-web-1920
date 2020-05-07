@@ -2,6 +2,7 @@
 const socket = io();
 
 const loginScreen = document.querySelector('.login')
+const rooms = document.getElementsByName('room') 
 const chatScreen = document.querySelector('.chat')
 const loginForm = document.querySelector('.loginForm')
 const chatForm = document.querySelector('.chatForm')
@@ -11,11 +12,17 @@ const messageList = document.getElementById('messages')
 const cardsSection = document.querySelector('.cards')
 const gameField = document.querySelector('.gameField')
 const turn = document.querySelector('.turn')
-const room = 'game'
+const startButton = document.querySelector('.start')
+
+startButton.disabled = true
+// const room = 'game'
 const leaveButton = document.querySelector('.leave')
 let noti;
 
 let myCards;
+
+console.log(rooms)
+
 
 // appendMessage('You joined')
 
@@ -23,7 +30,18 @@ loginForm.addEventListener('submit', (event) => {
     event.preventDefault()
     
     socket.emit('send-nickname', nickname.value)
-    socket.emit('room', room)
+
+    rooms.forEach(button => {
+        if(button.checked === true){
+            socket.emit('room', button.value)
+        }
+    
+    })
+
+    
+    //get the radio button value that is chosen
+    
+    // socket.emit('room', room.value)
     loginScreen.style.display = 'none'
     gameField.style.display = 'block'
     
@@ -60,9 +78,12 @@ loginForm.addEventListener('submit', (event) => {
 // })  
 
 
-socket.on('start game', (mdg, cards) => {
+socket.on('send start signal', (mdg, cards) => {
     console.log(mdg)
-    console.log(myCards)
+
+    startButton.disabled = false
+
+    startButton.addEventListener('click', startGame)
     // socket.emit('pass turn')
 })
 
@@ -195,4 +216,10 @@ function findCardInArray(array, cardToBeFound){
     
     return foundCard = array.cards.find(card => card.image === cardToBeFound)
 
+}
+
+function startGame(){
+    socket.emit('start game', 'you can start playing now')
+    startButton.removeEventListener('click', startGame);
+    startButton.disabled = true
 }

@@ -40,6 +40,8 @@ form button {
 
 .loginForm{
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .loginForm input{

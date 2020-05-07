@@ -15,14 +15,16 @@ nunjucks.configure(`${__dirname}/view/pages`, {
     express: app
   });
 
-Api.getNewCardDeck()
-    .then(getNewCardDeck => gameMaker(getNewCardDeck));
+// Api.getNewCardDeck()
+//     .then(getNewCardDeck => gameMaker(getNewCardDeck));
 
-const users = [];
 const players = [];
+let currentRoom;
 let currentTurn = 0;
 let turn = 0;
 let connectCounter = 0;
+let cardDeck
+let arrayfiedClientList
 
 function countInArray(array, what) {
   return array.filter(item => item == what).length;
@@ -68,18 +70,39 @@ function thirdCardPlayed(arrLength){
 
 function next_turn(socket, cards){
 
-  turn = ++currentTurn % players.length
+  console.log('NEXT TURN FUNCTION PLAYER LIST: ', arrayfiedClientList)
+
+  
+
+  turn = ++currentTurn % arrayfiedClientList.length
   // client.emit('your turn', "it's your turn sonny")
   // io.to(socketId).emit('your turn', "it's your turn sonny")
 
+  const nextPlayer = findPlayer(players, arrayfiedClientList[turn])
+
+  console.log('next turn is for: ', nextPlayer)
   // emit only to next player
   
   console.log("====================next turn triggered: ==========================",turn)
 
-  socket.to(players[turn].id).emit('your turn', `it's your turn ${players[turn].name}`, cards)
+  socket.to(nextPlayer.id).emit('your turn', `it's your turn ${nextPlayer.name}`, cards)
 
   // emit a message to all other 
 }
+// function next_turn2(socket, cards){
+
+//   turn = --currentTurn % players.length
+//   // client.emit('your turn', "it's your turn sonny")
+//   // io.to(socketId).emit('your turn', "it's your turn sonny")
+
+//   // emit only to next player
+  
+//   console.log("====================next turn triggered: ==========================",turn)
+
+//   socket.to(players[turn].id).emit('your turn', `it's your turn ${players[turn].name}`, cards)
+
+//   // emit a message to all other 
+// }
 
 function findHighestCard(arr){
   return arr.map(player => player.playedCards.map(cards => {
@@ -95,12 +118,16 @@ function findPlayer(array, socketId){
   return array.find(player => player.id == socketId);
 }
 
+function findRoom(array, socketId, room){
+  return array.find(player => player.id == socketId && player.room === room);
+}
+
 
 app
   .use(express.static(path.join(__dirname, "static")))
   .get("/", router.homeRoute);
 
-function gameMaker(deck) {
+// function gameMaker(deck) {
   io.on("connection", async (socket) => {
     //step1: first make a room
     // console.log('soccket: ', socket)
@@ -111,28 +138,82 @@ function gameMaker(deck) {
       console.log('playaHatazz: ', players)
       // console.log(users)
 
-      socket.on('room', (room) => {
+      socket.on('room', async(room) => {
+        
+        console.log('room: ', room)
+
         socket.join(room)
 
+        currentRoom = room
+
+        findPlayer(players, socket.id).room = currentRoom
+        
+        console.log('players with Room: ', players)
 
         // if 4 clients in the room make a new room
-        const clients = io.sockets.adapter.rooms["game"].length;
+        const numberOfClientsInRoom = io.sockets.adapter.rooms[currentRoom].length;
+        const clientList = io.sockets.adapter.rooms[currentRoom];
 
-        if(players.length >= 2){
+        console.log('clients in room: ', numberOfClientsInRoom)
+        console.log('clients in room: ', Object.keys(clientList.sockets))
+
+        arrayfiedClientList = Object.keys(clientList.sockets)
+
+        if(numberOfClientsInRoom >= 2){
           // bron: https://stackoverflow.com/questions/44661841/why-is-my-socket-io-event-firing-multiple-times
           // socket.emit('your turn', "it's your turn")
-          socket.to(players[turn].id).emit('your turn', `it's your turn ${players[turn].name}`)
+          
+          // io.emit('send start signal', 'game can start')
+          io.in(currentRoom).emit('send start signal', `game can start ${currentRoom}`);
+
+          cardDeck = await Api.getNewCardDeck()
+
+          
+          // console.log(drawnCards)
+          // io.to(socket.id).emit("deal cards", drawnCards);
+
+          // socket.to(arrayfiedClientList[0]).emit('your turn', `it's your turn ${players[turn].name}`)
+
+          
   
           }
       })
     })
 
-        const drawnCards = await dealCards(deck.deck_id)
+
+        
 
         // // every client draws 4 cards at start of the game
-        io.to(socket.id).emit("deal cards", drawnCards);
+        // io.to(socket.id).emit("deal cards", drawnCards);
 
+        socket.on('start game', async(msg) => {
+          // console.log(msg)
 
+          // cardDeck = await Api.getNewCardDeck()
+
+          // console.log('start game function: ', cardDeck)
+
+          // const drawnCards = await dealCards(cardDeck.deck_id)
+          const drawnCards = await dealCards(cardDeck.deck_id)
+          console.log(drawnCards)
+
+          io.to(socket.id).emit("deal cards", drawnCards);
+
+          console.log('aaaFIEFKSWLEFKWSEFKWEF', arrayfiedClientList)
+
+          const firstPlayer = findPlayer(players, arrayfiedClientList[0])
+          
+          console.log('finsKAKAKA', firstPlayer)
+
+          const currentPlayer = findPlayer(players, socket.id)
+          console.log('currennnetPlaayer: ', currentPlayer)
+
+          io.to(currentPlayer.id).emit('your turn', `You can do the first turn`)
+        })
+        
+        
+        
+        // io.to(socket.id).emit("deal cards", drawnCards);
 
         socket.on("clicked card", async (playedCard, cards) => {
           //logs the card that has been played
@@ -149,18 +230,19 @@ function gameMaker(deck) {
 
           values.map(value => console.log('VALUE LENGTHHH', value.length))
           values.every(value => console.log('THE TRUTH: ', firstCardPlayed(value.length)))
+          // console.log('turn === socket id: ', players[turn].id === socket.id)
 
-          if(values.every(value => firstCardPlayed(value.length)) === false && players[turn].id === socket.id){
-            console.log('DEZE FUNCTIE WORD NU UITGEVOERD')
-
-            next_turn(socket, cards)
-          }
-
-          else if(values.every(value => firstCardPlayed(value.length)) === false && players[turn].id !== socket.id){
-            console.log('DEZE FUNCTIE WORD NU UITGEVOERD')
+          if(values.every(value => firstCardPlayed(value.length)) === false && arrayfiedClientList[turn] === socket.id){
+            console.log('SOCKET ID COMP TRUE')
 
             next_turn(socket, cards)
           }
+
+          // else if(values.every(value => firstCardPlayed(value.length)) === false && players[turn].id !== socket.id){
+          //   console.log('SOCKET ID COMP FALSE')
+
+          //   next_turn2(socket, cards)
+          // }
           
           // if(values.every(value => secondCardPlayed(value.length)) === false && players[turn].id === socket.id){
           //   // console.log('oeeelaaaala: ', players[turn].id)
@@ -183,7 +265,7 @@ function gameMaker(deck) {
           let winner
 
           if(players.every(player => findCardFunction(player.playedCards.length)) === true && matchingSuits.length === 0){ //findCardFunction
-            console.log(":::::::::   FIRST ROUND FINISHED    ::::::::::::::")
+            console.log("::::::::: ROUND FINISHED ::::::::::::::")
 
               winner = players.find(player => player.playedCards[0].suit === firstCard.suit)
 
@@ -206,12 +288,6 @@ function gameMaker(deck) {
               console.log('The winningCarrdddd: ', winningCard)
               
               winner = players.find(player => player.playedCards.some(card => card.value === winningCard.value && card.suit === winningCard.suit))
-
-              // console.log('THE ROUND WINNER =====', winner.name)
-
-              // socket.to(winner.id).emit('your turn', `You won this round!!`)
-              
-            // }
 
           }
           return winner
@@ -282,7 +358,9 @@ function gameMaker(deck) {
 
             players.forEach(player => player.playedCards = [])
 
-            io.in("game").emit("round over", 'get ready for the next round')
+            
+
+            io.in(currentRoom).emit("round over", 'get ready for the next round')
 
           }
 
@@ -294,11 +372,11 @@ function gameMaker(deck) {
           //   "playedCards",
           //   playedCard.code
           // );
-          const discards = await Api.cardPiles(
-            deck.deck_id,
-            "discards",
-            playedCard.code
-          );
+          // const discards = await Api.cardPiles(
+          //   deck.deck_id,
+          //   "discards",
+          //   playedCard.code
+          // );
 
 
           const toBeRemovedFromHand = cards.cards.findIndex(
@@ -308,7 +386,14 @@ function gameMaker(deck) {
 
           cards.cards.splice(toBeRemovedFromHand, 1);
 
-          io.in("game").emit("show played card", playedCard);
+          const thisRoom = findRoom(players, socket.id, currentRoom)
+
+          // console.log('=====================THIS ROOOM ++++++++', thisRoom.room)
+
+
+          // const player = findPlayer(players, socket)
+
+          io.in(player.room).emit("show played card", playedCard);
           // io.to(socket.id).emit('drawn card', drawnCard.cards[0], cards);
         });
 
@@ -345,7 +430,7 @@ function gameMaker(deck) {
     });
 
   });
-}
+// }
 
 server.listen(port, () => {
   console.log(`Dev app listening on port: ${port}`);
