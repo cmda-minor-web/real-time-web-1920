@@ -117,7 +117,7 @@ socket.on('deal cards', (cards, turn) => {
     });
 })
 
-socket.on('clicked card', (card, cards) => {
+socket.on('show played card', (card, cards) => {
     console.log('clicked card: ', card)
     //Now append the card to the playfield
     
@@ -142,6 +142,10 @@ socket.on('round over', (msg) => {
 
     socket.emit('next round')
     
+})
+
+socket.on('round winner', (msg) => {
+    console.log(msg)
 })
 
 function appendMessage(message, classToBeAdded){
@@ -182,13 +186,6 @@ function findCard(ev, cards){
 
     socket.emit('clicked card', foundCard, cards)
   
-    
-    
-    // console.log('maaaa', console.log(indexOf(findCard)))
-    // gameField.appendChild(event.target)
-    // console.log(findCard)
-
-    // clickedCard.remove()
 
     ev.remove()
 

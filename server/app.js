@@ -74,11 +74,11 @@ function next_turn(socket, cards){
 
   // emit only to next player
   
-  console.log("next turn triggered: ",turn)
+  console.log("====================next turn triggered: ==========================",turn)
 
   socket.to(players[turn].id).emit('your turn', `it's your turn ${players[turn].name}`, cards)
 
-  
+  // emit a message to all other 
 }
 
 function findHighestCard(arr){
@@ -118,85 +118,80 @@ function gameMaker(deck) {
         // if 4 clients in the room make a new room
         const clients = io.sockets.adapter.rooms["game"].length;
 
-        if(players[turn].id === socket.id){
+        if(players.length >= 2){
           // bron: https://stackoverflow.com/questions/44661841/why-is-my-socket-io-event-firing-multiple-times
-          socket.emit('your turn', "it's your turn")
+          // socket.emit('your turn', "it's your turn")
+          socket.to(players[turn].id).emit('your turn', `it's your turn ${players[turn].name}`)
   
           }
       })
     })
-
-      // socket.join("game", async () => {
-        
-        // console.log(nickname, " joined ze game");
-
-        // if more than 4 players make new room
-        // const clients = io.sockets.adapter.rooms["game"].length;
-        
-
-
-        //  console.log(clients)
-
-        // io.in('game').emit('big-announcement', 'the game will start soon');
-
 
         const drawnCards = await dealCards(deck.deck_id)
 
         // // every client draws 4 cards at start of the game
         io.to(socket.id).emit("deal cards", drawnCards);
 
-        // socket.on('pass turn', (msg) => console.log(msg))
+
 
         socket.on("clicked card", async (playedCard, cards) => {
           //logs the card that has been played
           //in order to erase the card from the deck this card has to be found in the card deck
-
 
           console.log('playedCard: ', playedCard)
 
           const player = findPlayer(players, socket.id)
 
           player.playedCards.push(playedCard)
-          // pass turn to next player
-          // next_turn(socket, socket.id)
 
-          if(players[turn].id === socket.id){
-            // console.log('oeeelaaaala: ', players[turn].id)
-            // players[turn].myTurn = true
-            // socket.emit('make cards clickable')
+
+          let values = findHighestCard(players)
+
+          values.map(value => console.log('VALUE LENGTHHH', value.length))
+          values.every(value => console.log('THE TRUTH: ', firstCardPlayed(value.length)))
+
+          if(values.every(value => firstCardPlayed(value.length)) === false && players[turn].id === socket.id){
+            console.log('DEZE FUNCTIE WORD NU UITGEVOERD')
+
             next_turn(socket, cards)
           }
 
+          else if(values.every(value => firstCardPlayed(value.length)) === false && players[turn].id !== socket.id){
+            console.log('DEZE FUNCTIE WORD NU UITGEVOERD')
 
-      
-          console.log('Poooooooolooooo: ', players)
+            next_turn(socket, cards)
+          }
+          
+          // if(values.every(value => secondCardPlayed(value.length)) === false && players[turn].id === socket.id){
+          //   // console.log('oeeelaaaala: ', players[turn].id)
+          //   // players[turn].myTurn = true
+          //   // socket.emit('make cards clickable')
+          //   next_turn(socket, cards)
+          // }
+
 
           
+          
 
-          // push every playedCard in the playedCards array
+          function findRoundWinner(firstCardValue, findCardFunction){          
+  
+          console.log('oejejjeje', firstCardValue)
 
-          if(players.every(player => firstCardPlayed(player.playedCards.length)) === true){
+          let firstCard = firstCardValue //firstCardValue
+          let otherPlayerCards = values.slice(!0).flat()
+          let matchingSuits = otherPlayerCards.filter(card => card.suit === firstCard.suit)
+          let winner
+
+          if(players.every(player => findCardFunction(player.playedCards.length)) === true && matchingSuits.length === 0){ //findCardFunction
             console.log(":::::::::   FIRST ROUND FINISHED    ::::::::::::::")
-            const values = findHighestCard(players)
 
-            const firstCardPlayed = values.flat()[0]
+              winner = players.find(player => player.playedCards[0].suit === firstCard.suit)
 
-            const otherPlayerCards = values.slice(!0).flat()
+          }
+            
+          if(players.every(player => findCardFunction(player.playedCards.length)) === true && matchingSuits.length > 0){ //findCardFunction
 
-            const matchingSuits = otherPlayerCards.filter(card => card.suit === firstCardPlayed.suit)
-
-
-            if(matchingSuits.length === 0) {
-
-              const winner = players.find(player => player.playedCards[0].suit === firstCardPlayed.suit)
-
-              console.log(winner.name, ' won this round')
-
-              socket.to(winner.id).emit('your turn', `You won this round!!`)
-
-            } else if(matchingSuits.length > 0){
-
-              matchingSuits.push(firstCardPlayed)
+              matchingSuits.push(firstCard)
 
               console.log('HEt complete plaatje: ', matchingSuits)
 
@@ -210,30 +205,50 @@ function gameMaker(deck) {
 
               console.log('The winningCarrdddd: ', winningCard)
               
-              const winner = players.find(player => player.playedCards.some(card => card.value === winningCard.value && card.suit === winningCard.suit))
+              winner = players.find(player => player.playedCards.some(card => card.value === winningCard.value && card.suit === winningCard.suit))
 
               // console.log('THE ROUND WINNER =====', winner.name)
 
-              socket.to(winner.id).emit('your turn', `You won this round!!`)
+              // socket.to(winner.id).emit('your turn', `You won this round!!`)
               
-            }
+            // }
 
           }
+          return winner
+        }
 
-          if(players.every(player => secondCardPlayed(player.playedCards.length)) === true){
-            console.log(":::::::::   SECOND ROUND FINISHED    ::::::::::::::")
+        let firstRoundWinner
+        let secondRoundWinner
+        let thirdRoundWinner
 
-            const values = findHighestCard(players)
 
-            const firstCardPlayed = values.flat()[1]
 
-            console.log(firstCardPlayed)
-          }
+        // console.log('VAAALUES: ', values[0][0].length, players.length)
 
-          // if(players.every(player => thirdCardPlayed(player.playedCards.length)) === true){
-          //   console.log(":::::::::   THIRD ROUND FINISHED    ::::::::::::::")
-          // }
-          
+        //if values.length === players.length
+        console.log('VAAALUES: ', values)
+        console.log('VAAALUES: ', values[1].length)
+
+        if(values.every(value => firstCardPlayed(value.length)) === true) {
+          console.log('valuessssss')
+          // console.log(value)
+          firstRoundWinner = findRoundWinner(values[0][0], firstCardPlayed)
+          console.log("Round 1 WINNERRR", firstRoundWinner)
+          io.to(firstRoundWinner.id).emit('your turn', `You won this round!!`)
+        }
+
+        
+
+        if(values.every(value => secondCardPlayed(value.length)) === true) {
+          console.log('valuessssss 2222')
+          // check which array has a item first
+
+          values.find(d => console.log('aaa: ', d))
+          secondRoundWinner = findRoundWinner(values[1][0], secondCardPlayed)
+          console.log("Round 2 WINNERRR", secondRoundWinner)
+          socket.to(secondRoundWinner.id).emit('your turn', `You won this round!!`)
+        }
+        
           
           // check if everyone played 4 cards
           if(players.every(player => allCardsPlayed(player.playedCards.length)) === true){
@@ -268,10 +283,6 @@ function gameMaker(deck) {
             players.forEach(player => player.playedCards = [])
 
             io.in("game").emit("round over", 'get ready for the next round')
-            
-
-            // setTimeout(function(){ io.to(socket.id).emit("deal cards", drawNewCards);}, 5000);
-
 
           }
 
@@ -297,7 +308,7 @@ function gameMaker(deck) {
 
           cards.cards.splice(toBeRemovedFromHand, 1);
 
-          io.in("game").emit("clicked card", playedCard);
+          io.in("game").emit("show played card", playedCard);
           // io.to(socket.id).emit('drawn card', drawnCard.cards[0], cards);
         });
 
@@ -326,10 +337,6 @@ function gameMaker(deck) {
 
         })
 
-        // io.in('game').emit('show played card', 'the game will start soon');
-        // socket.on('play card', )
-      // });
-    // });
     socket.on('disconnect', function(reason){
       console.log('A player disconnected, ', reason);
       players.splice(players.indexOf(socket),1);
