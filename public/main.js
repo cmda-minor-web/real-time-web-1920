@@ -8,7 +8,7 @@ const tweets1_tweet_text = document.querySelector(".tweets1_tweet_text")
 const username_1followers_count = 20;
 const username_2followers_count = 300;
 
-// drawChart("User 1", "User 2", 0, 10)
+drawChart("Twitter user 1", "Twitter user 2", 0, 0)
 
 
 searchBar_1.addEventListener("submit", function(event) {
@@ -37,19 +37,20 @@ socket.on("new_followers_1", function(username_1, followers) {
 })
 
 function addTweet1(username_1, tweetObject) {
-  const tweetText = tweetObject.text
+  const tweetText_1 = tweetObject.text
   const username_1_display = tweetObject.user_name
+  const followers_1 = tweetObject.followers
 
   const username_1_field = document.querySelector(".main_user_1_name")
   username_1_field.innerHTML = username_1_display
 
 
   const li = document.createElement("li")
-  li.innerHTML = tweetText
+  li.innerHTML = tweetText_1
   tweets1.appendChild(li)
   // window.scrollTo(tweet)
   window.scrollTo(0, tweets1.scrollHeight)
-  // drawChart(username, "User 2", 40, 10)
+  drawChart(username_1_display, "User 2", followers_1, 0)
 }
 
 function addFollower(followers) {
@@ -73,7 +74,7 @@ function drawChart(username_1, username_2, followers_count_1, followers_count_2)
 
   let ctx = document.getElementById("myChart")
 
-  var data = {
+  let data = {
     labels: [username_1_display, username_2_display],
     datasets: [{
       barThickness: '80px',
@@ -90,7 +91,9 @@ function drawChart(username_1, username_2, followers_count_1, followers_count_2)
     }]
   }
 
-  var myChart = new Chart(ctx, {
+
+
+  let myChart = new Chart(ctx, {
     type: 'bar',
     data: data,
     options: {
