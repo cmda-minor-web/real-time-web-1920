@@ -70,7 +70,7 @@ function thirdCardPlayed(arrLength){
 
 function next_turn(socket, cards){
 
-  console.log('NEXT TURN FUNCTION PLAYER LIST: ', arrayfiedClientList)
+  // console.log('NEXT TURN FUNCTION PLAYER LIST: ', arrayfiedClientList)
 
   
 
@@ -262,7 +262,7 @@ app
           
           
 
-          function findRoundWinner(firstCardValue, findCardFunction, cardsArray){          
+          function findRoundWinner(firstCardValue, findCardFunction, cardsArray, arrNumber){          
   
           console.log('oejejjeje', firstCardValue)
 
@@ -277,7 +277,7 @@ app
           if(players.every(player => findCardFunction(player.playedCards.length)) === true && matchingSuits.length === 0){ //findCardFunction
             console.log("::::::::: ROUND FINISHED ::::::::::::::")
 
-              winner = players.find(player => player.playedCards[0].suit === firstCard.suit)
+              winner = players.find(player => player.playedCards[arrNumber].suit === firstCard.suit)
 
               console.log(winner)
 
@@ -341,7 +341,7 @@ app
 
           const firstPlayedCards = values.map(card => card[0])
 
-          firstRoundWinner = findRoundWinner(values[0][0], firstCardPlayed, firstPlayedCards)
+          firstRoundWinner = findRoundWinner(values[0][0], firstCardPlayed, firstPlayedCards, 0)
           console.log("Round 1 WINNERRR", firstRoundWinner)
           io.to(firstRoundWinner.id).emit('your turn', `You won this round!!`)
         }
@@ -368,7 +368,7 @@ app
           console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', cardToCheck)
 
           // second played cards needs to be passed to the function
-          secondRoundWinner = findRoundWinner(cardToCheck, secondCardPlayed, secondPlayedCards)
+          secondRoundWinner = findRoundWinner(cardToCheck, secondCardPlayed, secondPlayedCards, 1)
           console.log("Round 2 WINNERRR", secondRoundWinner)
           io.to(secondRoundWinner.id).emit('your turn', `You won second round!!`)
         }
@@ -379,20 +379,22 @@ app
 
           console.log('==================THIRD ROUND WAS FINSHED====================')
 
-          // const thirdPlayedCards = values.map(card => card[2])
+          const thirdPlayedCards = values.map(card => card[2])
 
-          // const lastRoundWinner = findLastRoundWinner(players, true)
+          console.log(thirdPlayedCards)
 
-          // const latsPlayedCardRoundWinner = lastRoundWinner.playedCards[2]
+          const lastRoundWinner = findLastRoundWinner(players, true)
 
-          // const cardToCheck = secondPlayedCards.find(card => card.suit === latsPlayedCardRoundWinner.suit && card.value === latsPlayedCardRoundWinner.value)
+          const latsPlayedCardRoundWinner = lastRoundWinner.playedCards[2]
 
-          // console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', cardToCheck)
+          const cardToCheck = thirdPlayedCards.find(card => card.suit === latsPlayedCardRoundWinner.suit && card.value === latsPlayedCardRoundWinner.value)
+
+          console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', cardToCheck)
 
 
-          // thirdRoundWinner = findRoundWinner(cardToCheck, thirdCardPlayed, thirdPlayedCards)
-          // console.log("Round 3 WINNERRR", thirdRoundWinner)
-          // io.to(thirdRoundWinner.id).emit('your turn', `You won second round!!`)
+          thirdRoundWinner = findRoundWinner(cardToCheck, thirdCardPlayed, thirdPlayedCards, 2)
+          console.log("Round 3 WINNERRR", thirdRoundWinner)
+          io.to(thirdRoundWinner.id).emit('your turn', `You won third round!!`)
         }
         
           
