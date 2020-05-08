@@ -6,8 +6,8 @@ const {
   MongoClient
 } = require("mongodb")
 const Twitter = require('twitter')
-let username_1 = "Twitter user 1"
-let username_2 = "Twitter user 2"
+// let username_1_1 = "Twitter user 1"
+// let username_1_2 = "Twitter user 2"
 
 
 require('dotenv').config()
@@ -31,35 +31,39 @@ app.use(express.static('./public'))
 app.set('view engine', 'ejs')
 app.set('views', './views')
 app.get('/', function(req, res) {
-  res.render('index.ejs', {
-    username_1: username_1,
-    username_2: username_2
-  })
+  res.render('index.ejs', {})
 })
 
 io.on('connection', socket => {
 
-  socket.on("start", function(username) {
-    getInfo(username, '')
+  socket.on("start", function(username_1, username_2) {
+    console.log(username_1)
+    console.log(username_2)
+    if (username_2 == "empty") {
+      console.log("wtf")
+      getInfo_1(username_1, '', '')
+    } else if (username_1 = "empty") {
+      // getInfo_2(username_2, '', '')
+    }
   })
 
-  socket.on('new_tweet', function(username, tweet) {
-    socket.broadcast.emit('new_tweet', username, tweet)
+  socket.on('new_tweet_1', function(username_1, tweetObject) {
+    socket.broadcast.emit('new_tweet_1', username_1, tweetObject)
   })
 
-  socket.on('new_follower', function(username, followers) {
-    socket.broadcast.emit('new_follower', username, followers)
+  socket.on('new_follower', function(username_1, followers) {
+    socket.broadcast.emit('new_follower', username_1, followers)
   })
 
-  socket.on('refresh_tweet', function(username, latest_tweet) {
-    getInfo(username, latest_tweet)
+  socket.on('refresh_tweet_1', function(username_1, latest_tweetObject) {
+    getInfo_1(username_1, latest_tweetObject)
   })
 })
 
 
-function getInfo(username, latest_tweetObject) {
+function getInfo_1(username_1, latest_tweetObject) {
   const filterOptions = {
-    screen_name: username,
+    screen_name: username_1,
     count: 1
   }
 
@@ -78,41 +82,40 @@ function getInfo(username, latest_tweetObject) {
 
   getData
     .then(tweetObject => {
-      // const tweetText = tweet.text
-      checkText(username, tweetObject, latest_tweetObject)
+      checkText(username_1, tweetObject, latest_tweetObject)
     })
     .catch(err => {
       console.log(err)
     })
 }
 
-function checkText(username, tweetObject, latest_tweetObject) {
+function checkText(username_1, tweetObject, latest_tweetObject) {
   const tweetText = tweetObject.text
   const latest_tweetText = latest_tweetObject.text
 
   if (tweetText == latest_tweetText) {
     console.log('same old')
-    refreshTweet(username, tweetObject, tweetText)
+    refreshTweet_1(username_1, tweetObject)
   } else {
     console.log('sunshine and rainbows: new tweet!')
-    // io.emit("new_tweet", username, tweetText)
+    io.emit("new_tweet_1", username_1, tweetObject)
   }
 }
 
-function checkFollowers(username, followers, latest_followers) {
+function checkFollowers(username_1, followers, latest_followers) {
   if (followers == latest_followers) {
     console.log('same old fam')
-    refreshTweet(username, followers)
+    refreshTweet_1(username_1, followers)
   } else {
     console.log('new follower count!')
-    io.emit("new_tweet", username, followers)
+    io.emit("new_tweet_1", username_1, followers)
   }
 }
 
 
 
-function refreshTweet(username, tweetObject, latest_tweet) {
-  getInfo(username, latest_tweet)
+function refreshTweet_1(username_1, tweetObject, latest_tweet_text) {
+  getInfo_1(username_1, tweetObject, latest_tweet_text)
 }
 
 http.listen(port, () => {
