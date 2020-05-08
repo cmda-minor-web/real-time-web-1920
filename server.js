@@ -95,7 +95,7 @@ function checkText(username, tweetObject, latest_tweetObject) {
     refreshTweet(username, tweetObject, tweetText)
   } else {
     console.log('sunshine and rainbows: new tweet!')
-    io.emit("new_tweet", username, tweetText)
+    // io.emit("new_tweet", username, tweetText)
   }
 }
 
