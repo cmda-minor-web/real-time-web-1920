@@ -13,6 +13,7 @@ const cardsSection = document.querySelector('.cards')
 const gameField = document.querySelector('.gameField')
 const turn = document.querySelector('.turn')
 const startButton = document.querySelector('.start')
+const toepButton = document.querySelector('.toep')
 
 startButton.disabled = true
 // const room = 'game'
@@ -119,6 +120,8 @@ socket.on('your turn', (msg) => {
       });
 
 })
+
+toepButton.addEventListener('click', () => socket.emit('toep', 'er word getoept'))
 
 
 socket.on('deal cards', (cards, turn) => {

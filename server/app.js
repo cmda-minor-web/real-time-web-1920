@@ -239,11 +239,11 @@ app
 
 
           
-          // if(values.every(value => secondCardPlayed(value.length)) === false && arrayfiedClientList[turn] !== socket.id){
-          //   console.log('SOCKET ID COMP FALSE')
+          if(values.every(value => firstCardPlayed(value.length)) === false && values.every(value => secondCardPlayed(value.length)) === false && values.every(value => thirdCardPlayed(value.length)) === false){
+            console.log('SOCKET ID COMP FALSE NUMER 1111111111')
 
-          //   next_turn(socket, cards)
-          // }
+            next_turn(socket, cards)
+          }
 
           // else if(values.every(value => firstCardPlayed(value.length)) === false && players[turn].id !== socket.id){
           //   console.log('SOCKET ID COMP FALSE')
@@ -258,7 +258,7 @@ app
           //   next_turn(socket, cards)
           // }
 
-          next_turn(socket)
+          // next_turn(socket)
           
           
 
@@ -346,8 +346,13 @@ app
           io.to(firstRoundWinner.id).emit('your turn', `You won this round!!`)
         }
         
-        else if(values.every(value => firstCardPlayed(value.length)) === false && values.every(value => secondCardPlayed(value.length)) === false){
-          console.log('SOCKET ID COMP false')
+        if(players.length === 2 && values.every(value => firstCardPlayed(value.length)) === false && values.every(value => secondCardPlayed(value.length)) === false && values.every(value => thirdCardPlayed(value.length)) === false){
+          console.log('SOCKET ID COMP false NRRR 222222')
+
+          next_turn(socket, cards)
+        }
+        if(players.length > 2 && values.every(value => firstCardPlayed(value.length)) === false && values.every(value => secondCardPlayed(value.length)) === false && values.every(value => thirdCardPlayed(value.length)) === false && arrayfiedClientList[turn] === socket.id){
+          console.log('SOCKET ID COMP false NRRR 222222')
 
           next_turn(socket, cards)
         }
@@ -366,12 +371,18 @@ app
           const cardToCheck = secondPlayedCards.find(card => card.suit === latsPlayedCardRoundWinner.suit && card.value === latsPlayedCardRoundWinner.value)
 
           console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', cardToCheck)
+          console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', lastRoundWinner)
 
           // second played cards needs to be passed to the function
           secondRoundWinner = findRoundWinner(cardToCheck, secondCardPlayed, secondPlayedCards, 1)
           console.log("Round 2 WINNERRR", secondRoundWinner)
+
+          //when the last round winner wins cards get played double...
+
           io.to(secondRoundWinner.id).emit('your turn', `You won second round!!`)
         }
+        
+          
 
         if(values.every(value => thirdCardPlayed(value.length)) === true) {
           // console.log('valuessssss 2222')
@@ -396,45 +407,57 @@ app
           console.log("Round 3 WINNERRR", thirdRoundWinner)
           io.to(thirdRoundWinner.id).emit('your turn', `You won third round!!`)
         }
+
         
-          
+
+
+        
+        console.log('ALL PLAYERS LAYED 4 CARDS DWON : ', players.every(player => allCardsPlayed(player.playedCards.length)))
+        players.map(player =>  console.log('true card legth: ', player.playedCards.length))  
         //   // check if everyone played 4 cards
-        //   if(players.every(player => allCardsPlayed(player.playedCards.length)) === true){
-        //     // this is what happens when everyone played his last card
-        //     //Math.max?
+          if(players.every(player => allCardsPlayed(player.playedCards.length)) === true){
+            // this is what happens when everyone played his last card
+            //Math.max?
+
+            console.log('==================FOURTH ROUND WAS FINSHED====================')
+
+            const fourthPlayedCards = values.map(card => card[3])
+
+            console.log('4th card: ', fourthPlayedCards)
+
+            // const values = findHighestCard(players)
+
+            // console.log('fereereerre', values)
+
+            // const maxRow = values.map( (row) => row.pop());
+
+            // //this finds the highest lat played card
+            // const winningValue = Math.max.apply(null, maxRow)
+
+            // //Find the player that played the winning value card
+
+            // //step 1 players.find(player => player.playedCards.pop() === same as highest vlaue)
+            // const winner = players.find(player => player.playedCards[3].value === winningValue)
+            // const losers = players.filter(player => {
+            //   if(player !== winner) player.points++
+            // })
 
 
-        //     const values = findHighestCard(players)
-
-        //     console.log('fereereerre', values)
-
-        //     const maxRow = values.map( (row) => row.pop());
-
-        //     //this finds the highest lat played card
-        //     const winningValue = Math.max.apply(null, maxRow)
-
-        //     //Find the player that played the winning value card
-
-        //     //step 1 players.find(player => player.playedCards.pop() === same as highest vlaue)
-        //     const winner = players.find(player => player.playedCards[3].value === winningValue)
-        //     const losers = players.filter(player => {
-        //       if(player !== winner) player.points++
-        //     })
             
             
-        //     console.log(":::::::::::::::::::::WINNER::::::::::::::::::::", winner)
-        //     console.log(":::::::::::::::::::::NOT-WINNER::::::::::::::::::::: ", losers)
+            console.log(":::::::::::::::::::::WINNER::::::::::::::::::::", winner)
+            console.log(":::::::::::::::::::::NOT-WINNER::::::::::::::::::::: ", losers)
 
 
-        //     // io.in("game").emit("winner", winner.name)
+            // io.in("game").emit("winner", winner.name)
 
-        //     players.forEach(player => player.playedCards = [])
+            players.forEach(player => player.playedCards = [])
 
             
 
-        //     io.in(winner.room).emit("round over", 'get ready for the next round')
+            io.in(winner.room).emit("round over", 'get ready for the next round')
 
-        //   }
+          }
 
           const toBeRemovedFromHand = cards.cards.findIndex(
             card => card.code == playedCard.code
