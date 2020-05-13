@@ -15,6 +15,9 @@ const turn = document.querySelector('.turn')
 const startButton = document.querySelector('.start')
 const toepButton = document.querySelector('.toep')
 const toepMessage = document.querySelector('.toepMessage')
+let players;
+let currentRoom;
+let canJoin = true;
 
 const popup = document.getElementById('myModal')
 
@@ -38,6 +41,8 @@ loginForm.addEventListener('submit', (event) => {
     rooms.forEach(button => {
         if(button.checked === true){
             socket.emit('room', button.value)
+            currentRoom = button.value
+            
         }
     
     })
@@ -51,44 +56,36 @@ loginForm.addEventListener('submit', (event) => {
     
 })
 
+// socket.on('send start signal', (mdg, cards) => {
+//     console.log(mdg)
 
-// chatForm.addEventListener('submit', (event) => {
-//     event.preventDefault()
+//     startButton.disabled = false
 
-//     if(message.value != ''){
-//     appendMessage(`You: ${message.value}`, 'yourMessage')
-//     socket.emit('chat message', message.value)
-//     message.value = ''
-//     }
+//     startButton.addEventListener('click', startGame)
+//     // socket.emit('pass turn')
+// })
+
+socket.on('full', (msg) => {
+    alert(msg)
+})
+
+socket.on('player', (msg) => {
+    players = msg.players
+
+    turn.innerHTML = 'Player ' + players
+
+    if(players >= 2){
     
-// })
-
-
-// socket.on('chat message', (msg) => {
-//     appendMessage(msg, 'incomingMessage')
-// })
-
-// socket.on('user connected', (nickname) => {
-//     appendMessage(nickname, 'serverNotification')
-// })
-
-// socket.on('server message', (msg) => {
-//     appendMessage(msg, 'serverMessage')
-// })
-
-// socket.on('challenge', (word) => {
-//     console.log(word)
-//     appendMessage(word, 'serverMessage')
-// })  
-
-
-socket.on('send start signal', (mdg, cards) => {
-    console.log(mdg)
-
     startButton.disabled = false
+    
+    startButton.addEventListener('click', () => {
+        socket.emit('play', msg.room)
+        canJoin = false
+    })
 
-    startButton.addEventListener('click', startGame)
-    // socket.emit('pass turn')
+    }
+
+    console.log(players)
 })
 
 socket.on('your turn', (msg) => {
@@ -97,13 +94,15 @@ socket.on('your turn', (msg) => {
     noti = msg
 
     turn.textContent = noti
-
+    
     // console.log('kaarta', myCards)
 
     
     //event listener should be place here
 
     const cardsInHand = document.querySelectorAll('.card')
+
+    console.log(cardsInHand)
 
     //when card is clicked a broadcast to everyplayer needs to be sent
     // cardsInHand.forEach(card => card.addEventListener("mousedown", _listener, true))
@@ -138,12 +137,11 @@ socket.on('toep popup', (msg) => {
 socket.on('deal cards', (cards, turn) => {
     // socket.on('pass turn', (player) => console.log('rukkeee:', player))
 
-    
-    console.log('caards: ', cards)
+    popup.style.display = "none";
+
     myCards = cards
     
-    console.log('my turn: ', turn)
-    // console.log('playa: ', playa)
+
 
     cards.cards.forEach(card => {
         
@@ -167,15 +165,22 @@ socket.on('winner', (winner) => {
 
     console.log('the winner is: ', winner)
 
+ 
+
     // appendMessage(winner, 'winnerMessage')
 })
 
-socket.on('round over', (msg) => {
+socket.on('game over', (msg) => {
     // gameField.innerHTML = ''
 
     gameField.innerHTML = ''
+    console.log(msg)
 
-    socket.emit('next round')
+    popup.style.display = "block";
+    toepMessage.textContent = msg
+
+    socket.emit('next round', currentRoom)
+    
     
 })
 
@@ -219,7 +224,7 @@ function findCard(ev, cards){
     socket.emit('pass turn')
 
 
-    socket.emit('clicked card', foundCard, cards)
+    socket.emit('clicked card', foundCard, cards, currentRoom)
 
     turn.textContent = ''
   

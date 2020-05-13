@@ -9,7 +9,7 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const Api = require("./modules/api.js");
 const Data = require("./modules/data.js")
-const roomId = ''
+let canJoin = true
 
 nunjucks.configure(`${__dirname}/view/pages`, {
     autoescape: true,
@@ -19,58 +19,56 @@ nunjucks.configure(`${__dirname}/view/pages`, {
 // Api.getNewCardDeck()
 //     .then(getNewCardDeck => gameMaker(getNewCardDeck));
 
-let turnArray = [
-  {
-    'turn': 0,
-    'currentTurn': 0,
-    'room': 'Gameroom 1'
-  },
-  {
-    'turn': 0,
-    'currentTurn': 0,
-    'room': 'Gameroom 2'
-  },
-  {
-    'turn': 0,
-    'currentTurn': 0,
-    'room': 'Gameroom 3'
-  },
-  {
-    'turn': 0,
-    'currentTurn': 0,
-    'room': 'Gameroom 4'
-  }
-]
-
-
-const players = [];
-let roomsArray;
+let games = Array(4);
 let currentRoom;
 let currentTurn = 0;
 let turn = 0;
+let connectCounter = 0;
 let cardDeck
 let arrayfiedClientList
-let playerRoomSorted
+
+async function fillGamesArray(){
+for (let i = 0; i < 4; i++) {
+  games[i] = {players: 0 , pid: [0 , 0, 0, 0], deck: {}, turn: 0, currentTurn: 0, toeps: 0, playerList: [
+    {
+      id: '',
+      name: '',
+      playedCards: [],
+      points: 0,
+      roundWinner: false
+    },
+    {
+      id: '',
+      name: '',
+      playedCards: [],
+      points: 0,
+      roundWinner: false
+    },
+    {
+      id: '',
+      name: '',
+      playedCards: [],
+      points: 0,
+      roundWinner: false
+    },
+    {
+      id: '',
+      name: '',
+      playedCards: [],
+      points: 0,
+      roundWinner: false
+    },
+  ]};
+  games[i].deck = await Api.getNewCardDeck()
+}
+}
+
+fillGamesArray()
 
 function countInArray(array, what) {
   return array.filter(item => item == what).length;
 }
 
-async function dealCards(id){
-
-  const drawnCards = await Api.drawCards(id, 4);
-
-  const transformedCards = Data.transformCardValues(drawnCards)
-
-
-  // console.log('drawnCAAAARDSS: ', transformedCards)
-
-  // // findPlayer(players, socket.id).cardsInHand.push(drawnCards)
-
-  // // every client draws 4 cards at start of the game
-  return transformedCards
-
-}
 
 async function shuffleCards(id){
   const shuffledCards = await Api.shuffleCards(id)
@@ -94,60 +92,17 @@ function thirdCardPlayed(arrLength){
   return arrLength === 3;
 }
 
-function next_turn(arr , socket, gameRoom){
+function next_turn(obj, socket){
 
-  console.log('FUNC', arr)
-  console.log('gameRoom to be found: ', gameRoom)
-
-  const roomToPassTurn = turnArray.find(turnObj => turnObj.room === gameRoom)
-
-  console.log(roomToPassTurn)
-
-  const roomList = playerRoomSorted.find(room => room.some(playerRoom => playerRoom))
-
-  console.log('Array to be passed around in: ' , roomList)
-
-  roomToPassTurn.turn = ++currentTurn % roomList.length
-
-  console.log(roomToPassTurn)
-
-  const nextPlayer = findPlayer(roomList, roomList[roomToPassTurn.turn].id)
-
-  console.log(nextPlayer)
-
-  socket.to(nextPlayer.id).emit('your turn', `it's your turn ${nextPlayer.name}`)
-
-  // arr.find
-
-  // playerRoomSorted.forEach(room => {
-
-  //   console.log(room)
-  //   turn = ++currentTurn % room.length
-  //   const nextPlayer = findPlayer(room, room[turn].id)
-
-  //   console.log('next turn is for: ', nextPlayer)
-  //   // emit only to next player
-    
-  //   console.log("====================next turn triggered: ==========================",turn)
-
-  //   socket.to(nextPlayer.id).emit('your turn', `it's your turn ${nextPlayer.name}`, cards)
-  // })
-
-  // turn = ++currentTurn % arrayfiedClientList.length
-  // client.emit('your turn', "it's your turn sonny")
-  // io.to(socketId).emit('your turn', "it's your turn sonny")
-
-  // const nextPlayer = findPlayer(players, arrayfiedClientList[turn])
-
-  // console.log('next turn is for: ', nextPlayer)
-  // emit only to next player
   
-  // console.log("====================next turn triggered: ==========================",turn)
+  const players = obj.pid.filter(id => id !== 0)
 
-  // socket.to(nextPlayer.id).emit('your turn', `it's your turn ${nextPlayer.name}`, cards)
-  // socket.to(nextPlayer.room).emit('other player turn', `it's ${nextPlayer.name}'s turn`, cards)
+  obj.turn = ++obj.currentTurn % players.length
 
-  // emit a message to all other 
+  console.log('its, this players turn now : ', players[obj.turn])
+
+  socket.to(players[obj.turn]).emit('your turn', `it's your turn ${players[obj.turn]}`)
+
 }
 
 function findHighestCard(arr){
@@ -181,11 +136,13 @@ app
   io.on("connection", async (socket) => {
     //step1: first make a room
     // console.log('soccket: ', socket)
+    const playerId = socket.id
+
+    console.log(playerId + ' connected');
+
     socket.on("send-nickname", nickname => {
       // Taking turns
-      players.push({ id: socket.id, name: nickname, playedCards: [], points: 0, roundWinner: false});
-      
-      // console.log('playaHatazz: ', players)
+      // players.push({ id: socket.id, name: nickname, playedCards: [], points: 0, roundWinner: false});
       // console.log(users)
 
       socket.on('room', async(room) => {
@@ -194,150 +151,126 @@ app
 
         socket.join(room)
 
-        currentRoom = room
-
-        findPlayer(players, socket.id).room = room
         
-        // console.log('players with Room: ', players)
+        if (games[room].players < 4) {
+          games[room].players++;
+          games[room].pid[games[room].players - 1] = playerId;
+          games[room].playerList[games[room].players - 1].id = playerId
+          games[room].playerList[games[room].players - 1].name = nickname
+      } // else emit the full event
+      else{
+        socket.emit('full', 'This room is full', room)
+        return;
+    }
+     console.log(games[room]);
+    players = games[room].players
 
-        // if 4 clients in the room make a new room
-        const numberOfClientsInRoom = io.sockets.adapter.rooms[currentRoom].length;
-        const clientList = io.sockets.adapter.rooms[currentRoom];
+    socket.emit('player', { playerId, players, room })
 
-        const arrayfied = Object.entries(io.sockets.adapter.rooms)
-
-        const filledRooms = arrayfied.filter(room => room[1].length >= 2)
-
-        // console.log(filledRooms)
-
-        roomsArray = filledRooms.map(room => Object.keys(room[1].sockets))
-
-        console.log('filledROoms: ', filledRooms)
-        console.log('filledROoms: ', filledRooms.length)
-
-        playerRoomSorted = roomsArray.map(roomArr => roomArr.map(socketId => findPlayer(players, socketId)))
-        
-        // playerRoomSorted.map(room => room.push({turn: 0, currentTurn: 0}))
-
-
-        // console.log('last minute: ', playerRoomSorted.pop())
-        // console.log('Room arrays: ', roomsArray)
-        // console.log('Mapped room arrays: ', playersInRoom)
-        
-        // socketsInRoom.map(arr => console.log(arr))
-        
-
-        console.log('clients in room: ', numberOfClientsInRoom)
-        console.log('clients in room: ', Object.keys(clientList.sockets))
-        
-        
-        arrayfiedClientList = Object.keys(clientList.sockets)
-        playerRoomSorted.forEach(async(room) => {
-          if(room.length >= 2){
-            io.in(currentRoom).emit('send start signal', `game can start ${currentRoom}`);
-
-
-            cardDeck = await Api.getNewCardDeck()
-          }
-        })
       })
     })
+    
+    socket.on('play', (room) => {
+      socket.broadcast.emit('play', room);
+      console.log("ready " + room);
+      let players = games[room].pid.filter(id => id !== 0)
 
+      async function deal(){
+
+      for(const [index, playerId] of players.entries()){
+        // const drawnCards = await Api.drawCards(games[room].deck.deck_id, 4)
+        console.log('for of loop: ', index, playerId)
+        
+        const drawnCards = await Api.drawCards(games[room].deck.deck_id, 4)
+
+        const transformedCards = Data.transformCardValues(drawnCards)
+        
+        io.to(playerId).emit("deal cards", transformedCards);
+
+      }
+      // next_turn(games[room], socket)
+      socket.to(players[0]).emit('your turn', 'first turn is for you')
+    }
+      deal()
+
+
+    })
 
         
 
         // // every client draws 4 cards at start of the game
         // io.to(socket.id).emit("deal cards", drawnCards);
 
-        socket.on('start game', async(msg) => {
+        // socket.on('start game', async(msg) => {
+        //   // console.log(msg)
 
+        //   // cardDeck = await Api.getNewCardDeck()
+
+        //   // console.log('start game function: ', cardDeck)
+
+        //   // const drawnCards = await dealCards(cardDeck.deck_id)
+        //   const drawnCards = await dealCards(cardDeck.deck_id)
+        //   console.log(drawnCards)
+
+        //   io.to(socket.id).emit("deal cards", drawnCards);
+
+        //   console.log('aaaFIEFKSWLEFKWSEFKWEF', arrayfiedClientList)
+
+        //   const firstPlayer = findPlayer(players, arrayfiedClientList[0])
           
+        //   console.log('finsKAKAKA', firstPlayer)
 
-          // cardDeck = await Api.getNewCardDeck()
-          
-          // console.log('start game function: ', cardDeck)
+        //   const currentPlayer = findPlayer(players, socket.id)
+        //   console.log('currennnetPlaayer: ', currentPlayer)
 
-          // playerRoomSorted.forEach(room => {
-          //   // console.log(room[0].room)
-          //   turnArray.push({turn: 0, currentTurn: 0, room: room[0].room})
-          // })
-
-          // console.log('turnArrayyyy: ', turnArray)
-
-          // const drawnCards = await dealCards(cardDeck.deck_id)
-          const drawnCards = await dealCards(cardDeck.deck_id)
-          console.log(drawnCards)
-          console.log(turnArray)
-
-          io.to(socket.id).emit("deal cards", drawnCards);
-
-          // console.log('aaaFIEFKSWLEFKWSEFKWEF', arrayfiedClientList)
-
-          const firstPlayer = findPlayer(players, arrayfiedClientList[0])
-          
-
-          const currentPlayer = findPlayer(players, socket.id)
-          // console.log('currennnetPlaayer: ', currentPlayer)
-          playerRoomSorted.forEach(room => {
-            next_turn(turnArray, socket, currentPlayer.room)
-          })
-          
-          
-        })
-
-        socket.on('toep', (msg) => {
-          console.log(msg, socket.id)
-
-          const toepingPlayer = findPlayer(players, socket.id)
-
-          socket.to(toepingPlayer.room).emit('toep popup', `${toepingPlayer.name} toept, ga je mee?`);
-        
-        })
+        //   next_turn(socket)
+        //   // socket.to(currentPlayer.room).emit('your turn', `You can do the first turn`)
+        // })
         
         
         
         // io.to(socket.id).emit("deal cards", drawnCards);
 
-        socket.on("clicked card", async (playedCard, cards) => {
+        socket.on("clicked card", async (playedCard, cards, room) => {
           //logs the card that has been played
           //in order to erase the card from the deck this card has to be found in the card deck
 
+          // i need the room number
+          // socket id
+          let players = games[room].playerList.filter(player => player.id !== '')
+
+          console.log('filltaareddee PLaaysserlisiisisit::::', players)
+
           console.log('playedCard: ', playedCard)
+          console.log('room: ', room)
+          
 
           const player = findPlayer(players, socket.id)
 
+          
+
           player.playedCards.push(playedCard)
+
+          io.in(room).emit("show played card", playedCard);
+
+          console.log('PLAYAA: ', player)
 
 
           let values = findHighestCard(players)
 
-          let valuesSortedByRoom = playerRoomSorted.map(room => findHighestCard(room))
-
-          console.log('valuesSortedByRoom', valuesSortedByRoom)
+          console.log(values)
 
           values.map(value => console.log('VALUE LENGTHHH', value.length))
-          
           values.every(value => console.log('THE TRUTH: ', firstCardPlayed(value.length)))
           // console.log('turn === socket id: ', players[turn].id === socket.id)
 
-          // console.log('PLAYERS sorted by room', playerRoomSorted)
+
           
-          valuesSortedByRoom.forEach(room => {
-            console.log('EVERY ROOM : ', room)
+          if(values.every(value => firstCardPlayed(value.length)) === false && values.every(value => secondCardPlayed(value.length)) === false){
+            console.log('SOCKET ID COMP FALSE NUMER 1111111111')
 
-            // const player = players.find(player => player.playedCards.some(card => card.value === room[0][0].value && card.suit === room[0][0].suit))
-
-            console.log(player)
-
-            if(room.every(value => firstCardPlayed(value.length)) === false && room.every(value => secondCardPlayed(value.length)) === false && room.every(value => thirdCardPlayed(value.length)) === false){
-              console.log('SOCKET ID COMP FALSE NUMER 1111111111')
-  
-              next_turn(turnArray, socket, player.room)
-            }
-
-          })
-          
-
+            next_turn(games[room], socket)
+          }
 
           // else if(values.every(value => firstCardPlayed(value.length)) === false && players[turn].id !== socket.id){
           //   console.log('SOCKET ID COMP FALSE')
@@ -356,7 +289,7 @@ app
           
           
 
-          function findRoundWinner(firstCardValue, findCardFunction, cardsArray, arrNumber, arr){          
+          function findRoundWinner(firstCardValue, findCardFunction, cardsArray, arrNumber){          
   
           console.log('oejejjeje', firstCardValue)
 
@@ -367,10 +300,8 @@ app
           let matchingSuits = otherPlayerCards.filter(card => card.suit === firstCard.suit)
           let winner
           let losers
-          
-          arr.every(player => console.log('player: ', player.length))
 
-          if(arr.every(player => findCardFunction(player.length)) === true && matchingSuits.length === 0){ //findCardFunction
+          if(players.every(player => findCardFunction(player.playedCards.length)) === true && matchingSuits.length === 0){ //findCardFunction
             console.log("::::::::: ROUND FINISHED ::::::::::::::")
 
               winner = players.find(player => player.playedCards[arrNumber].suit === firstCard.suit)
@@ -379,7 +310,7 @@ app
 
               winner.roundWinner = true
 
-              losers = arr.filter(player => player !== winner)
+              losers = players.filter(player => player !== winner)
 
               console.log('LOSEERS: ', losers)
 
@@ -388,7 +319,7 @@ app
               
           }
             
-          if(arr.every(player => findCardFunction(player.length)) === true && matchingSuits.length > 0){ //findCardFunction
+          if(players.every(player => findCardFunction(player.playedCards.length)) === true && matchingSuits.length > 0){ //findCardFunction
 
               matchingSuits.push(firstCard)
 
@@ -406,7 +337,7 @@ app
               
               winner = players.find(player => player.playedCards.some(card => card.value === winningCard.value && card.suit === winningCard.suit))
 
-              losers = arr.filter(player => player !== winner)
+              losers = players.filter(player => player !== winner)
 
               console.log('LOSEERS: ', losers)
 
@@ -421,6 +352,7 @@ app
         let firstRoundWinner
         let secondRoundWinner
         let thirdRoundWinner
+        let fourthRoundWinner
 
 
 
@@ -431,36 +363,37 @@ app
         console.log('VAAALUES: ', values[1].length)
         console.log(values.every(value => firstCardPlayed(value.length)))
 
-        valuesSortedByRoom.forEach(room => {
-          const player = players.find(player => player.playedCards.some(card => card.value === room[0][0].value && card.suit === room[0][0].suit))
+        if(values.every(value => firstCardPlayed(value.length)) === true) {
+          console.log('valuessssss')
+          // console.log(value)
 
-          console.log(room.every(value => secondCardPlayed(value.length)) === true)
+          const firstPlayedCards = values.map(card => card[0])
+
+          console.log(values[0][0])
+
+          firstRoundWinner = findRoundWinner(values[0][0], firstCardPlayed, firstPlayedCards, 0)
+          console.log("Round 1 WINNERRR", firstRoundWinner)
+          io.to(firstRoundWinner.id).emit('your turn', `You won this round!!`)
+        }
         
-          if(room.every(value => firstCardPlayed(value.length)) === true) {
-            console.log('valuessssss')
-            // console.log(value)
-  
-            const firstPlayedCards = room.map(card => card[0])
-  
-            firstRoundWinner = findRoundWinner(room[0][0], firstCardPlayed, firstPlayedCards, 0, room)
-            console.log("Round 1 WINNERRR", firstRoundWinner)
-            io.to(firstRoundWinner.id).emit('your turn', `You won this round!!`)
-          }
+        if(players.length === 2 && players.every(player => firstCardPlayed(player.playedCards.length)) === false && players.every(player => secondCardPlayed(player.playedCards.length)) === false && players.every(player => thirdCardPlayed(player.playedCards.length)) === false ){
 
-          if(room.length === 2 && room.every(value => firstCardPlayed(value.length)) === false && room.every(value => secondCardPlayed(value.length)) === false){
-            console.log('SOCKET ID COMP false NRRR 222222, 22PLAYERSSSS')
-            
-            next_turn(turnArray, socket, player.room)
-          }
-          if(room.length > 2 && room.every(value => firstCardPlayed(value.length)) === false && room.every(value => secondCardPlayed(value.length)) === false && room.every(value => thirdCardPlayed(value.length)) === false){
-            console.log('SOCKET ID COMP false NRRR 222222')
-  
-            next_turn(turnArray, socket, player.room)
-          }
+          //&& games[room].pid[games[room].turn] === players[games[room].turn].id
+          console.log('SOCKET ID COMP false NRRR 222222')
+          console.log(games[room].pid[games[room].turn])
+          console.log(players[games[room].turn].id)
+          next_turn(games[room], socket)
+        }
+        if(players.length > 2 && players.every(player => firstCardPlayed(player.playedCards.length)) === false && players.every(player => secondCardPlayed(player.playedCards.length)) === false && players.every(player => thirdCardPlayed(player.playedCards.length)) === false && games[room].pid[games[room].turn] === socket.id){
+          console.log('SOCKET ID COMP false NRRR 222222')
 
-          
+          next_turn(games[room], socket)
+        }
+        
+        console.log('2 cards have been played by every player', values.every(value => secondCardPlayed(value.length)) === true)
 
-          if(room.every(value => secondCardPlayed(value.length)) === true) {
+        
+        if(values.every(value => secondCardPlayed(value.length)) === true) {
 
           const secondPlayedCards = values.map(card => card[1])
 
@@ -474,7 +407,7 @@ app
           console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', lastRoundWinner)
 
           // second played cards needs to be passed to the function
-          secondRoundWinner = findRoundWinner(cardToCheck, secondCardPlayed, secondPlayedCards, 1, room)
+          secondRoundWinner = findRoundWinner(cardToCheck, secondCardPlayed, secondPlayedCards, 1)
           console.log("Round 2 WINNERRR", secondRoundWinner)
 
           //when the last round winner wins cards get played double...
@@ -484,7 +417,7 @@ app
         
           
 
-        if(room.every(value => thirdCardPlayed(value.length)) === true) {
+        if(values.every(value => thirdCardPlayed(value.length)) === true) {
           // console.log('valuessssss 2222')
           // check which array has a item first
 
@@ -503,88 +436,10 @@ app
           console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', cardToCheck)
 
 
-          thirdRoundWinner = findRoundWinner(cardToCheck, thirdCardPlayed, thirdPlayedCards, 2, room)
+          thirdRoundWinner = findRoundWinner(cardToCheck, thirdCardPlayed, thirdPlayedCards, 2)
           console.log("Round 3 WINNERRR", thirdRoundWinner)
           io.to(thirdRoundWinner.id).emit('your turn', `You won third round!!`)
         }
-
-        })
-        
-
-        // if(values.every(value => firstCardPlayed(value.length)) === true) {
-        //   console.log('valuessssss')
-        //   // console.log(value)
-
-        //   const firstPlayedCards = values.map(card => card[0])
-
-        //   firstRoundWinner = findRoundWinner(values[0][0], firstCardPlayed, firstPlayedCards, 0)
-        //   console.log("Round 1 WINNERRR", firstRoundWinner)
-        //   io.to(firstRoundWinner.id).emit('your turn', `You won this round!!`)
-        // }
-        
-        // if(players.length === 2 && values.every(value => firstCardPlayed(value.length)) === false && values.every(value => secondCardPlayed(value.length)) === false && values.every(value => thirdCardPlayed(value.length)) === false){
-        //   console.log('SOCKET ID COMP false NRRR 222222')
-
-        //   next_turn(socket, cards)
-        // }
-        // if(players.length > 2 && values.every(value => firstCardPlayed(value.length)) === false && values.every(value => secondCardPlayed(value.length)) === false && values.every(value => thirdCardPlayed(value.length)) === false && arrayfiedClientList[turn] === socket.id){
-        //   console.log('SOCKET ID COMP false NRRR 222222')
-
-        //   next_turn(socket, cards)
-        // }
-        
-        console.log('2 cards have been played by every player', values.every(value => secondCardPlayed(value.length)) === true)
-
-        valuesSortedByRoom.forEach(room => console.log(room.every(value => secondCardPlayed(value.length)) === true))
-
-
-        // if(values.every(value => secondCardPlayed(value.length)) === true) {
-
-        //   const secondPlayedCards = values.map(card => card[1])
-
-        //   const lastRoundWinner = findLastRoundWinner(players, true)
-
-        //   const latsPlayedCardRoundWinner = lastRoundWinner.playedCards[1]
-
-        //   const cardToCheck = secondPlayedCards.find(card => card.suit === latsPlayedCardRoundWinner.suit && card.value === latsPlayedCardRoundWinner.value)
-
-        //   console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', cardToCheck)
-        //   console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', lastRoundWinner)
-
-        //   // second played cards needs to be passed to the function
-        //   secondRoundWinner = findRoundWinner(cardToCheck, secondCardPlayed, secondPlayedCards, 1)
-        //   console.log("Round 2 WINNERRR", secondRoundWinner)
-
-        //   //when the last round winner wins cards get played double...
-
-        //   io.to(secondRoundWinner.id).emit('your turn', `You won second round!!`)
-        // }
-        
-          
-
-        // if(values.every(value => thirdCardPlayed(value.length)) === true) {
-        //   // console.log('valuessssss 2222')
-        //   // check which array has a item first
-
-        //   console.log('==================THIRD ROUND WAS FINSHED====================')
-
-        //   const thirdPlayedCards = values.map(card => card[2])
-
-        //   console.log(thirdPlayedCards)
-
-        //   const lastRoundWinner = findLastRoundWinner(players, true)
-
-        //   const latsPlayedCardRoundWinner = lastRoundWinner.playedCards[2]
-
-        //   const cardToCheck = thirdPlayedCards.find(card => card.suit === latsPlayedCardRoundWinner.suit && card.value === latsPlayedCardRoundWinner.value)
-
-        //   console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', cardToCheck)
-
-
-        //   thirdRoundWinner = findRoundWinner(cardToCheck, thirdCardPlayed, thirdPlayedCards, 2)
-        //   console.log("Round 3 WINNERRR", thirdRoundWinner)
-        //   io.to(thirdRoundWinner.id).emit('your turn', `You won third round!!`)
-        // }
 
         
 
@@ -603,11 +458,26 @@ app
 
             console.log('4th card: ', fourthPlayedCards)
 
-            // const values = findHighestCard(players)
+            const lastRoundWinner = findLastRoundWinner(players, true)
 
-            // console.log('fereereerre', values)
+            const latsPlayedCardRoundWinner = lastRoundWinner.playedCards[3]
 
-            // const maxRow = values.map( (row) => row.pop());
+            const cardToCheck = fourthPlayedCards.find(card => card.suit === latsPlayedCardRoundWinner.suit && card.value === latsPlayedCardRoundWinner.value)
+
+            console.log('THE CARD THAT SHOULD BE CHECKED FIRST ::::', cardToCheck)
+
+
+            fourthRoundWinner = findRoundWinner(cardToCheck, allCardsPlayed, fourthPlayedCards, 3)
+            console.log("Round 4 WINNERRR", fourthRoundWinner)
+
+            const losers = players.filter(players => players.id !== fourthRoundWinner.id)
+
+            losers.map(loser => {
+              loser.points ++
+            })
+
+            console.log(players)
+            // io.to(thirdRoundWinner.id).emit('your turn', `You won third round!!`)
 
             // //this finds the highest lat played card
             // const winningValue = Math.max.apply(null, maxRow)
@@ -629,59 +499,58 @@ app
 
             // io.in("game").emit("winner", winner.name)
 
-            players.forEach(player => player.playedCards = [])
+            
 
             
 
-            io.in(winner.room).emit("round over", 'get ready for the next round')
+            io.in(room).emit("game over", `${fourthRoundWinner.name}, won this game. Get ready for the next one!`)
+
+            players.forEach(player => player.playedCards = [])
 
           }
 
-          const toBeRemovedFromHand = cards.cards.findIndex(
-            card => card.code == playedCard.code
-          );
-
-
-          cards.cards.splice(toBeRemovedFromHand, 1);
-
-          const thisRoom = findRoom(players, socket.id, currentRoom)
-
-
-          io.in(player.room).emit("show played card", playedCard);
-          // io.to(socket.id).emit('drawn card', drawnCard.cards[0], cards);
         });
 
 
-        socket.on("next round", async() => {
+        socket.on("next round", async(room) => {
 
-          const shuffledCards = await shuffleCards(deck.deck_id)
+          const shuffledCards = await shuffleCards(games[room].deck.deck_id)
 
           // console.log(':::::::::NEWCARDS:::::::::::::: ', shuffledCards)
 
-          const newCards = await Api.drawNewCards(shuffledCards.deck_id)
+          const newCards = await Api.drawCards(shuffledCards.deck_id, 4)
 
+          
           // console.log('newwwwwcardsssszz: ', newCards)
 
           const transformedNewCards = Data.transformCardValues(newCards)
+          
 
           // setTimeout(() => {
             io.to(socket.id).emit("deal cards", transformedNewCards)
+
+            socket.to(games[room].pid[0]).emit('your turn', 'first turn is for you')
+
+
           // }, 5000)
 
-          if(players[turn].id === socket.id){
-            // bron: https://stackoverflow.com/questions/44661841/why-is-my-socket-io-event-firing-multiple-times
-            socket.emit('your turn', "it's your turn FUCKER")
+          // if(players[turn].id === socket.id){
+          //   // bron: https://stackoverflow.com/questions/44661841/why-is-my-socket-io-event-firing-multiple-times
+          //   socket.emit('your turn', "it's your turn FUCKER")
     
-            }
+          //   }
 
         })
 
-    socket.on('disconnect', function(reason){
-      console.log('A player disconnected, ', reason);
-      players.splice(players.indexOf(socket),1);
-      turn--;
-      console.log("A number of players now ",players.length);
-    });
+    // when the user disconnects from the server, remove him from the game room
+  socket.on('disconnect', () => {
+  for (let i = 0; i < 4; i++) {
+      if (games[i].pid[0] == playerId || games[i].pid[1] == playerId)
+          games[i].players--;
+  }
+  console.log(playerId + ' disconnected');
+ 
+ });
 
   });
 // }
