@@ -4,6 +4,7 @@ async function getNewCardDeck() {
     const getCards = await fetch(
       "https://deckofcardsapi.com/api/deck/new/shuffle/?cards=JS,QS,KS,AS,7S,8S,9S,0S,JD,QD,KD,AD,7D,8D,9D,0D,JC,QC,KC,AC,7C,8C,9C,0C,JH,QH,KH,AH,7H,8H,9H,0H"
     );
+    
   
     const cards = await getCards.json();
   

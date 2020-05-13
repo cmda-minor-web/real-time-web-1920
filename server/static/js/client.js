@@ -14,6 +14,9 @@ const gameField = document.querySelector('.gameField')
 const turn = document.querySelector('.turn')
 const startButton = document.querySelector('.start')
 const toepButton = document.querySelector('.toep')
+const toepMessage = document.querySelector('.toepMessage')
+
+const popup = document.getElementById('myModal')
 
 startButton.disabled = true
 // const room = 'game'
@@ -123,6 +126,14 @@ socket.on('your turn', (msg) => {
 
 toepButton.addEventListener('click', () => socket.emit('toep', 'er word getoept'))
 
+socket.on('toep popup', (msg) => {
+    // console.log(msg)
+    // alert(msg)
+
+    popup.style.display = "block";
+    toepMessage.textContent = msg
+})
+
 
 socket.on('deal cards', (cards, turn) => {
     // socket.on('pass turn', (player) => console.log('rukkeee:', player))
@@ -209,6 +220,8 @@ function findCard(ev, cards){
 
 
     socket.emit('clicked card', foundCard, cards)
+
+    turn.textContent = ''
   
 
     ev.remove()
